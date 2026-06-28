@@ -72,3 +72,7 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(json.dumps({"status": "ok"}).encode())
+        # ከዚህ ቀደም የነበረውን class handler(BaseHTTPRequestHandler): የሚለውን እንዳለ ትተህ
+# በፋይሉ መጨረሻ ላይ (ከማንኛውም ክላስ ውጭ) ይህንን መስመር ጨምርበት፦
+
+app = handler # ቪርሴል መግቢያውን እንዲያውቀው ያደርጋል
