@@ -3,9 +3,9 @@ const tg = window.Telegram.WebApp;
 tg.expand(); // ገጹን ሙሉ ስክሪን ማድረግ
 tg.ready();  // ሚኒ አፑ ዝግጁ መሆኑን ለቴሌግራም ማሳወቅ
 
-// የ Supabase ሊንኮች (እነዚህን በቪርሴል ወይም በኮድህ ውስጥ ባለው ትክክለኛ አድራሻ ተካቸው)
-const SUPABASE_URL = "https://your-supabase-project.supabase.co"; // <-- ያንተን Supabase URL ተካ
-const SUPABASE_ANON_KEY = "your-anon-key"; // <-- ያንተን Supabase Anon Key ተካ
+// ከላይ የላክኸውን መረጃ መነሻ በማድረግ የተስተካከለ
+const SUPABASE_URL = "https://gvtnwunuvchwcyvlqjul.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2dG53dW51dmNod2N5dmxxanVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjkwNTIsImV4cCI6MjA5ODI0NTA1Mn0.qlpHOGWQmU1mvOEJPqMloi9-nyF3lZWfK5ENbHfsCDM";
 
 // በመያዣነት የምንጠቀምባቸው ተለዋዋጮች
 let telegramId = null;
