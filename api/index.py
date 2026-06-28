@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+from http.server import BaseHTTPRequestHandler
 from supabase import create_client, Client
 
 # ሚስጥራዊ ቁልፎችን ከ environment መውሰድ
@@ -25,22 +26,25 @@ def handle_telegram_message(message):
         
         # ተጠቃሚውን በ Supabase መመዝገብ
         if supabase:
-            existing = supabase.table("users").select("*").eq("telegram_id", chat_id).execute()
-            if not existing.data:
-                user_data = {
-                    "telegram_id": chat_id,
-                    "username": username,
-                    "full_name": full_name,
-                    "referred_by": int(referrer_id) if (referrer_id and referrer_id.isdigit()) else None
-                }
-                supabase.table("users").insert(user_data).execute()
-                
-                # ጋባዡ ካለ ነጥብ መጨመር
-                if referrer_id and referrer_id.isdigit() and int(referrer_id) != chat_id:
-                    supabase.rpc("increment_referral_count", {"user_id": int(referrer_id)}).execute()
+            try:
+                existing = supabase.table("users").select("*").eq("telegram_id", chat_id).execute()
+                if not existing.data:
+                    user_data = {
+                        "telegram_id": chat_id,
+                        "username": username,
+                        "full_name": full_name,
+                        "referred_by": int(referrer_id) if (referrer_id and referrer_id.isdigit()) else None
+                    }
+                    supabase.table("users").insert(user_data).execute()
+                    
+                    # ጋባዡ ካለ ነጥብ መጨመር
+                    if referrer_id and referrer_id.isdigit() and int(referrer_id) != chat_id:
+                        supabase.rpc("increment_referral_count", {"user_id": int(referrer_id)}).execute()
+            except Exception as db_err:
+                print(f"Supabase Error: {db_err}")
 
-        # ለተጠቃሚው የሚላክ የምላሽ ጽሑፍ
-        share_link = f"https://t.me/beente-sma-mariam-bot?start={chat_id}" # እዚህ ላይ የቦትህን ትክክለኛ username ተካው
+        # ለተጠቃሚው የሚላክ የምላሽ ጽሑፍ (ትክክለኛ የቴሌግራም ሊንክ አወቃቀር)
+        share_link = f"https://t.me/BeenteSmaMariam_bot?start={chat_id}"
         welcome_msg = (
             f"እንኳን በደህና መጡ {full_name}!\n\n"
             f"ይህ 'በእንተ ስማ ለማርያም' ዕለታዊ የበረከት መድረክ ነው።\n"
@@ -60,17 +64,23 @@ def handle_telegram_message(message):
         }
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload)
 
-# ቪርሴል ፋይሉን ሲጠራው የሚሰራው ዋናው ፈንክሽን
-def handler(request):
-    try:
-        body = json.loads(request.body.decode('utf-8'))
-        if 'message' in body:
-            handle_telegram_message(body['message'])
-    except Exception as e:
-        print(f"Error: {e}")
-        
-    return {
-        'statusCode': 200,
-        'headers': {'Content-Type': 'application/json'},
-        'body': json.dumps({'status': 'ok'})
-    }
+# ቪርሴል ሰርቨር አልባ ፈንክሽን የሚቀበልበት ትክክለኛው ክላስ
+class handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        try:
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            body = json.loads(post_data.decode('utf-8'))
+            
+            if 'message' in body:
+                handle_telegram_message(body['message'])
+                
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({'status': 'ok'}).encode('utf-8'))
+        except Exception as e:
+            print(f"Error: {e}")
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(json.dumps({'error': str(e)}).encode('utf-8'))
