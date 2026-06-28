@@ -1,173 +1,20 @@
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #1a0f11; /* ጥቁር ማርሩን */
-    color: #f7f1e3;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    user-select: none;
-}
-
-.app-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding: 16px;
-    box-sizing: border-box;
-    justify-content: space-between;
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    background: rgba(212, 175, 55, 0.1);
-    border: 1px solid #d4af37; /* ወርቃማ መስመር */
-    border-radius: 12px;
-    padding: 12px;
-}
-
-.avatar {
+.floating-plus-one {
+    position: fixed;
+    color: #ffd700; /* የወርቅ ቀለም */
     font-size: 24px;
-    background: #d4af37;
-    padding: 8px;
-    border-radius: 50%;
-    margin-right: 12px;
-}
-
-.user-info h3 {
-    margin: 0;
-    font-size: 16px;
-}
-
-.badge {
-    font-size: 12px;
-    color: #d4af37;
     font-weight: bold;
+    pointer-events: none;
+    animation: floatUpAndFade 1s ease-out forwards;
+    z-index: 9999;
 }
 
-.blessing-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    border-left: 4px solid #d4af37;
-    margin: 15px 0;
+@keyframes floatUpAndFade {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1.2);
+    }
 }
-
-.blessing-card h2 {
-    margin: 0 0 8px 0;
-    color: #d4af37;
-    font-size: 18px;
-}
-
-.blessing-card p {
-    font-style: italic;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-/* የአምስተር ስታይል ትልቁ ክብ ቁልፍ */
-.main-button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-}
-
-.blessing-circle-btn {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #8b2635 0%, #5c1d24 100%);
-    border: 8px solid #d4af37;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-    color: white;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.1s ease;
-}
-
-.blessing-circle-btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-}
-
-.btn-text {
-    font-size: 18px;
-    font-weight: bold;
-    text-shadow: 1px 1px 3px black;
-}
-
-.btn-subtext {
-    font-size: 11px;
-    color: #d4af37;
-    margin-top: 4px;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.stat-box {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 12px;
-    text-align: center;
-}
-
-.stat-title {
-    display: block;
-    font-size: 11px;
-    color: #aaa;
-}
-
-.stat-value {
-    font-size: 20px;
-    font-weight: bold;
-    color: #d4af37;
-    margin-top: 4px;
-    display: block;
-}
-
-.donation-drawer {
-    background: #251417;
-    border-top: 3px solid #d4af37;
-    border-radius: 16px 16px 0 0;
-    padding: 16px;
-    text-align: center;
-    margin: 10px -16px -16px -16px;
-}
-
-.donation-drawer h3 {
-    margin: 0 0 6px 0;
-    font-size: 16px;
-    color: #d4af37;
-}
-
-.donation-drawer p {
-    font-size: 12px;
-    color: #ccc;
-    margin: 0 0 12px 0;
-}
-
-.payment-methods {
-    display: flex;
-    gap: 10px;
-}
-
-.pay-btn {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.pay-btn.cbe { background-color: #005a9c; color: white; }
-.pay-btn.telebirr { background-color: #ea1d24; color: white; }
