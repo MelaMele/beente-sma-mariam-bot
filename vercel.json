@@ -2,15 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/*.py",
-      "use": "@vercel/python",
-      "config": { "pythonVersion": "3.10" }
+      "src": "api/index.py",
+      "use": "@vercel/python"
     }
   ],
   "rewrites": [
     {
       "source": "/api",
-      "destination": "/api/index.py"
+      "destination": "api/index.py"
     },
     {
       "source": "/(.*)",
