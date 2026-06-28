@@ -1,22 +1,32 @@
 name: Daily Blessing Content Updater
+
 on:
   schedule:
-    - cron: '21 21 * * *' # በየቀኑ በኢትዮጵያ አቆጣጠር በትክክል ለሊት 6:00 ሰዓት
+    - cron: '0 21 * * *' # በየቀኑ በኢትዮጵያ አቆጣጠር በትክክል ለሊት 6:00 ሰዓት (21:00 UTC)
   workflow_dispatch: # በእጅ ለመቀስቀስ ማግበሪያ
+
 jobs:
   update-content:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+          cache: 'pip' # የጥገኝነት ፋይሎችን በፍጥነት ለመጫን ማፋጠኛ
+
       - name: Install Dependencies
-        run: pip install supabase ethiopian-date requests
+        run: |
+          python -m pip install --upgrade pip
+          pip install supabase ethiopian-date requests
+
       - name: Run Automation Engine
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }} # ለዕለታዊ መልዕክት ማስተላለፊያ (ካስፈለገ)
         run: python src/update_blessing.py
