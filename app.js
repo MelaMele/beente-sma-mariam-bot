@@ -54,11 +54,8 @@ function createFloatingPlusOne(x, y) {
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 1000);
 }
-// የዕለቱን በዓል እና ስዕለ አድህኖ ከሰርቨር ላይ ለማምጣት (ይህንን በ app.js ውስጥ ጨምረው)
 async function loadDailyBlessing() {
     try {
-        // ለምሳሌ ዛሬ ሰኔ 22 ቢሆን የቅዱስ ሚካኤልን ስዕል እና ጥቅስ ያዘጋጃል
-        // ወደፊት ይህ መረጃ በቀጥታ ከ Supabase ይመጣል
         const response = await fetch('/api/daily-blessing'); 
         if (response.ok) {
             const data = await response.json();
@@ -66,19 +63,16 @@ async function loadDailyBlessing() {
             document.getElementById('holy-image').src = data.image_url;
             document.getElementById('scripture-quote').innerText = data.quote;
         } else {
-            // ሰርቨሩ መረጃውን እስኪያዘጋጅ በነባሪ እውነተኛ መንፈሳዊ ሊንክ እዚህ እንተካለን
-            document.getElementById('holiday-title').innerText = "የዕለቱ ቅዱስ መታሰቢያ";
-            // አስተማማኝ እና ፈጣን የሆነ የስዕል ሊንክ (ለምሳሌ የዊኪፒዲያ ወይም የሕዝባዊ ሰርቨር ሊንክ)
-            document.getElementById('holy-image').src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Virgin_and_Child_with_Angels_and_Saints_-_Google_Art_Project.jpg/400px-Virgin_and_Child_with_Angels_and_Saints_-_Google_Art_Project.jpg";
+            // ባክ-ኤንዱ እስኪስተካከል በቀጥታ አስተማማኝ የሆነ የቅድስት ድንግል ማርያም ስዕለ አድህኖ ሊንክ እዚህ እንሰጠዋለን
+            document.getElementById('holiday-title').innerText = "በእንተ ስማ ለማርያም";
+            // ይህ ሊንክ በሁሉም ቦታ በፍጥነት የሚከፈት ንጹህ ምስል ነው
+            document.getElementById('holy-image').src = "https://st-takla.org/Gallery/Images/Jesus-Christ/02-Coptic-Icons/01-Virgin-Mary/St-Takla-org__Coptic-Icon-Madonna-and-Child-Jesus-03.jpg";
         }
     } catch (error) {
         console.error("የዕለቱን ስዕል መጫን አልተቻለም:", error);
         // ኔትወርክ ቢጠፋ እንኳ የማይጠፋ ነባሪ ምስል
-        document.getElementById('holy-image').src = "https://upload.wikimedia.org/wikipedia/commons/4/47/Icon_of_the_Mother_of_God_of_the_Sign_-_Google_Art_Project.jpg";
+        document.getElementById('holy-image').src = "https://st-takla.org/Gallery/Images/Jesus-Christ/02-Coptic-Icons/01-Virgin-Mary/St-Takla-org__Coptic-Icon-Madonna-and-Child-Jesus-03.jpg";
     }
 }
 
-// ገጹ ልክ እንደተከፈተ ስዕሉን እንዲያመጣ መጥራት
-document.addEventListener('DOMContentLoaded', () => {
-    loadDailyBlessing();
-});
+
