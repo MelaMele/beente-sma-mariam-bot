@@ -17,6 +17,10 @@
     {
       "src": "app.js",
       "use": "@vercel/static"
+    },
+    {
+      "src": "mary.jpg",
+      "use": "@vercel/static"
     }
   ],
   "rewrites": [
