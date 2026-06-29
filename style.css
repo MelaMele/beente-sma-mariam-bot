@@ -1,7 +1,194 @@
+/* መላውን ገጽ ማስተካከያ */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #4A0E17; /* ማሩን / ጠጅ ቀለም ዳራ */
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+}
+
+/* የተጠቃሚ መገለጫ (Profile) */
+.user-profile {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.avatar {
+    font-size: 30px;
+    margin-right: 15px;
+}
+
+.user-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+}
+
+.badge-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.badge {
+    background: #ffd700;
+    color: #4A0E17;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.points-badge {
+    font-weight: bold;
+}
+
+/* የእለቱ ጥቅስ ካርድ */
+.blessing-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-left: 5px solid #ffd700;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.blessing-card h2 {
+    margin: 0 0 10px 0;
+    color: #ffd700;
+    font-size: 20px;
+}
+
+/* ዋናው ክብ ቁልፍ */
+.main-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.blessing-circle-btn {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 8px solid #ffd700;
+    background: radial-gradient(circle, #6B1521 0%, #4A0E17 100%);
+    color: #ffd700;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,215,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s ease;
+}
+
+.blessing-circle-btn:active {
+    transform: scale(0.95);
+}
+
+.btn-text {
+    font-size: 18px;
+    display: block;
+}
+
+.btn-subtext {
+    font-size: 11px;
+    color: #ffffff;
+    opacity: 0.8;
+    margin-top: 5px;
+}
+
+/* የበረከት ቁጥሮች ስታቲስቲክስ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.stat-title {
+    font-size: 12px;
+    opacity: 0.7;
+    display: block;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+/* የልገሳ ሳጥን */
+.donation-drawer {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+    border-top: 2px solid rgba(255,215,0,0.2);
+}
+
+.donation-drawer h3 {
+    margin: 0 0 5px 0;
+    color: #ffd700;
+}
+
+.donation-drawer p {
+    font-size: 12px;
+    margin: 0 0 10px 0;
+    opacity: 0.8;
+}
+
+.payment-methods {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.pay-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.pay-btn.cbe { background: #0066b2; color: white; }
+.pay-btn.telebirr { background: #ea1c24; color: white; }
+
+/* አንተ የላክኸው የ +1 ፍሎቲንግ አኒሜሽን ኮድ እዚህ ይቀጥላል */
 .floating-plus-one {
     position: fixed;
-    color: #ffd700; /* የወርቅ ቀለም */
-    font-size: 24px;
+    color: #ffd700;
+    font-size: 28px;
     font-weight: bold;
     pointer-events: none;
     animation: floatUpAndFade 1s ease-out forwards;
@@ -15,6 +202,6 @@
     }
     100% {
         opacity: 0;
-        transform: translateY(-100px) scale(1.2);
+        transform: translateY(-120px) scale(1.3);
     }
 }
