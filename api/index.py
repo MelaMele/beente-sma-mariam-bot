@@ -1,86 +1,94 @@
 import os
-import json
+import random
+from flask import Flask, request, jsonify
 import requests
-from http.server import BaseHTTPRequestHandler
-from supabase import create_client, Client
 
-# ሚስጥራዊ ቁልፎችን ከ environment መውሰድ
-url = os.environ.get("SUPABASE_URL")
-key = os.environ.get("SUPABASE_KEY")
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+app = Flask(__name__)
 
-supabase: Client = create_client(url, key) if (url and key) else None
+TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+# ቪርሴል ላይ በራስ-ሰር የሚሰራ የቴሌግራም ሊንክ
+TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
 
-def handle_telegram_message(message):
-    chat_id = message['chat']['id']
-    text = message.get('text', '')
-    user = message.get('from', {})
-    
-    username = user.get('username', '')
-    full_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
+# 1. የቅዱሳን፣ የድርሳናት እና የመጽሐፍ ቅዱስ የማንቂያ ጥቅሶች ስብስብ (ያለ ዳታቤዝ የሚሰራ)
+SPIRITUAL_QUOTES = [
+    {
+        "text": "“ስጡ ይሰጣችኋል፤... በምትሰፍሩበት መስፈሪያ ተመልሶ ይሰፈርላችኋልና።”",
+        "source": "ጌታችን ኢየሱስ ክርስቶስ (ሉቃስ 6:36)"
+    },
+    {
+        "text": "“ለነዳያን የምትሰጠው ገንዘብ አትጥፋብኝ ብለህ የምትቀብረው ሳይሆን፣ ወደ ሰማይ የምታስቀድመው እውነተኛ ሀብትህ ነው።”",
+        "source": "ቅዱስ ዮሐንስ አፈወርቅ"
+    },
+    {
+        "text": "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የኃጢአት መደምሰሻ፣ የጽድቅም መክፈቻ ናት።”",
+        "source": "ቅዱስ ባስልዮስ ታላቁ"
+    },
+    {
+        "text": "“የተራበውን ሰው ስታይ ክርስቶስን እንዳየህ ቁጠረው፤ ምክንያቱም እርሱ 'በነዚህ ከሁሉ ለሚያንሱ ካደረጋችሁት ለእኔ አደረጋችሁት' ብሏል።”",
+        "source": "ቅዱስ ኤፍሬም ሶርያዊ"
+    },
+    {
+        "text": "“ሰብአዊነት ለሰው ልጅ ማዘንና መድረስ የሃይማኖት ልዩነት አይጠይቅም። ልብህ ለሌላው ሲራራ አንተ እውነተኛ የፈጣሪ ምስል ነህ።”",
+        "source": "ከአבות መንፈሳዊ ምክር"
+    },
+    {
+        "text": "“የማስተሰረያ ቀን ሳይመጣብህ በፊት እጅህን ለመስጠት ዘርጋ፤ ምጽዋት ከሞት ታድናለችና።”",
+        "source": "መጽሐፈ ጦቢት (ድርሳነ ሚካኤል)"
+    }
+]
 
-    # ተጠቃሚው /start ሲል
-    if text.startswith('/start'):
-        parts = text.split()
-        referrer_id = parts[1] if len(parts) > 1 else None
+@app.route('/api', methods=['POST'])
+def webhook():
+    update = request.get_json()
+    if not update or "message" not in update:
+        return "OK", 200
+
+    message = update["message"]
+    chat_id = message["chat"]["id"]
+    text = message.get("text", "")
+
+    if text.startswith("/start"):
+        # የተጠቃሚውን ስም መውሰድ
+        first_name = message["chat"].get("first_name", "ክቡር ምዕመን")
         
-        # ተጠቃሚውን በ Supabase መመዝገብ
-        if supabase:
-            try:
-                existing = supabase.table("users").select("*").eq("telegram_id", chat_id).execute()
-                if not existing.data:
-                    user_data = {
-                        "telegram_id": chat_id,
-                        "username": username,
-                        "full_name": full_name,
-                        "referred_by": int(referrer_id) if (referrer_id and referrer_id.isdigit()) else None
-                    }
-                    supabase.table("users").insert(user_data).execute()
-                    
-                    # ጋባዡ ካለ ነጥብ መጨመር
-                    if referrer_id and referrer_id.isdigit() and int(referrer_id) != chat_id:
-                        supabase.rpc("increment_referral_count", {"user_id": int(referrer_id)}).execute()
-            except Exception as db_err:
-                print(f"Supabase Error: {db_err}")
-
-        # ለተጠቃሚው የሚላክ የምላሽ ጽሑፍ (ትክክለኛ የቴሌግራም ሊንክ አወቃቀር)
-        share_link = f"https://t.me/BeenteSmaMariam_bot?start={chat_id}"
-        welcome_msg = (
-            f"እንኳን በደህና መጡ {full_name}!\n\n"
-            f"ይህ 'በእንተ ስማ ለማርያም' ዕለታዊ የበረከት መድረክ ነው።\n"
-            f"የእርስዎ ልዩ የማጋሪያ ሊንክ፦ {share_link}\n\n"
-            f"ይህንን ሊንክ ለወዳጅዎ በማጋራት የበረከት አምባሳደር ይሁኑ! ሚኒ አፑን ለመክፈት ከታች ያለውን ቁልፍ ይጫኑ።"
+        welcome_text = (
+            f"እንኳን ወደ <b>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት</b> መድረክ በደህና መጡ፣ {first_name}!\n\n"
+            f"ይህ መድረክ የተቸገሩትን ለመርዳት፣ ለገዳማት መባ ለማቅረብ እና በየ 30 ደቂቃው "
+            f"የቅዱሳን አባቶችን ትምህርት የምናገኝበት የምሕረት ቤት ነው።\n\n"
+            f"እባክዎ ከታች ያለውን ቁልፍ በመንካት ይሳተፉ፦"
         )
         
-        # መልዕክቱን በቴሌግራም API መላክ
-        payload = {
-            "chat_id": chat_id,
-            "text": welcome_msg,
-            "reply_markup": {
-                "inline_keyboard": [[
-                    {"text": "🎁 መድረኩን ክፈት", "web_app": {"url": "https://beente-sma-mariam-bot.vercel.app"}}
-                ]]
-            }
+        reply_markup = {
+            "inline_keyboard": [[
+                {
+                    "text": "❤️ ቤተሳይዳን ክፈት",
+                    "web_app": {"url": "https://beente-sma-mariam-bot.vercel.app/"}
+                }
+            ]]
         }
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload)
+        
+        send_message(chat_id, welcome_text, reply_markup)
 
-# ቪርሴል ሰርቨር አልባ ፈንክሽን የሚቀበልበት ትክክለኛው ክላስ
-class handler(BaseHTTPRequestHandler):
-    def do_POST(self):
-        try:
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            body = json.loads(post_data.decode('utf-8'))
-            
-            if 'message' in body:
-                handle_telegram_message(body['message'])
-                
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps({'status': 'ok'}).encode('utf-8'))
-        except Exception as e:
-            print(f"Error: {e}")
-            self.send_response(500)
-            self.end_headers()
-            self.wfile.write(json.dumps({'error': str(e)}).encode('utf-8'))
+    return "OK", 200
+
+# 2. በየ 30 ደቂቃው ለሚኒ አፑ ጥቅስ የሚያቀርበው አዲሱ መስመር (Route)
+@app.route('/api/daily-blessing', methods=['GET'])
+def get_daily_blessing():
+    # ከዝርዝሩ ውስጥ በዘፈቀደ (Random) አንድ ጥቅስ መርጦ ለድረ-ገጹ ይሰጣል
+    quote = random.choice(SPIRITUAL_QUOTES)
+    return jsonify({
+        "holiday_name": "የቤተሳይዳ ዕለታዊ ማንቂያ",
+        "image_url": "mary.jpg", # እኛ የጫንነው እውነተኛ ስዕል
+        "quote": f"{quote['text']} — {quote['source']}"
+    })
+
+def send_message(chat_id, text, reply_markup=None):
+    url = f"{TELEGRAM_API}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML"
+    }
+    if reply_markup:
+        payload["reply_markup"] = reply_markup
+    requests.post(url, json=payload)
