@@ -59,19 +59,15 @@ async function loadDailyBlessing() {
         const response = await fetch('/api/daily-blessing'); 
         if (response.ok) {
             const data = await response.json();
+            // ከባክ-ኤንድ የመጣውን የኢትዮጵያ ቀን፣ ስንክሳር እና ግጻዌ በገጹ ላይ መተካት
+            document.getElementById('ethiopian-date').innerText = data.ethiopian_date;
             document.getElementById('holiday-title').innerText = data.holiday_name;
-            document.getElementById('holy-image').src = data.image_url;
+            document.getElementById('sinksar-text').innerHTML = `<b>📖 ዕለታዊ ስንክሳር፦</b> ${data.sinksar}`;
+            document.getElementById('gitsawe-text').innerHTML = `<b>📜 የዕለቱ ግጻዌ፦</b> ${data.gitsawe}`;
             document.getElementById('scripture-quote').innerText = data.quote;
-        } else {
-            // ባክ-ኤንዱ እስኪስተካከል በቀጥታ አስተማማኝ የሆነ የቅድስት ድንግል ማርያም ስዕለ አድህኖ ሊንክ እዚህ እንሰጠዋለን
-            document.getElementById('holiday-title').innerText = "በእንተ ስማ ለማርያም";
-            // ይህ ሊንክ በሁሉም ቦታ በፍጥነት የሚከፈት ንጹህ ምስል ነው
-            document.getElementById('holy-image').src = "https://st-takla.org/Gallery/Images/Jesus-Christ/02-Coptic-Icons/01-Virgin-Mary/St-Takla-org__Coptic-Icon-Madonna-and-Child-Jesus-03.jpg";
         }
     } catch (error) {
-        console.error("የዕለቱን ስዕል መጫን አልተቻለም:", error);
-        // ኔትወርክ ቢጠፋ እንኳ የማይጠፋ ነባሪ ምስል
-        document.getElementById('holy-image').src = "https://st-takla.org/Gallery/Images/Jesus-Christ/02-Coptic-Icons/01-Virgin-Mary/St-Takla-org__Coptic-Icon-Madonna-and-Child-Jesus-03.jpg";
+        console.error("የቅዱሳት መጻሕፍት መረጃን መጫን አልተቻለም:", error);
     }
 }
 
