@@ -3,51 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት - Mini App</title>
+    <title>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <div class="user-profile">
-            <div class="avatar" id="user-avatar">🎁</div>
-            <div class="user-info">
-                <h3 id="user-name">ክቡር ምዕመን</h3>
-                <div class="badge-row">
-                    <span class="badge" id="user-badge">የበረከት ጀማሪ</span>
-                    <span class="points-badge">🪙 <span id="user-points">0</span></span>
+        <div class="header-zone">
+            <h1 class="logo-3d">ቤተሳይዳ<br><span class="sub-logo">መንፈሳዊ በጎ አድራጎት</span></h1>
+            <div class="user-profile">
+                <div class="avatar" id="user-avatar">🎁</div>
+                <div class="user-info">
+                    <h3 id="user-name">ክቡር ምዕመን</h3>
+                    <div class="badge-row">
+                        <span class="badge" id="user-badge">የበረከት ጀማሪ</span>
+                        <span class="points-badge">🪙 <span id="user-points">0</span></span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="holiday-card">
-            <div class="icon-holder">
-                <h2 id="holiday-title">የዕለቱ መታሰቢያ</h2>
-            </div>
+            <h2 id="ethiopian-date">ሰኔ 23 ቀን 2018 ዓ.ም</h2>
+            <h3 id="holiday-title">የዕለቱ ስንክሳር እና መታሰቢያ</h3>
+            
             <div class="image-container">
-    <img id="holy-image" src="mary.jpg" alt="ስዕለ አድህኖ">
-</div>
-            <p id="scripture-quote">"የጻድቅ መታሰቢያ ለበረከት ነው።" (ምሳሌ 10:7)</p>
+                <img id="holy-image" src="mary.jpg" alt="ስዕለ አድህኖ">
+            </div>
+
+            <div class="church-info-box">
+                <p id="sinksar-text"><b>📖 ዕለታዊ ስንክሳር፦</b> የጻድቅ መታሰቢያ ለበረከት ነው።</p>
+                <p id="gitsawe-text"><b>📜 የዕለቱ ግጻዌ (ምንባብ)፦</b> በመቅደስህ ውስጥ ምስጋና ይገባል።</p>
+            </div>
+            
+            <p id="scripture-quote">"እግዚአብሔር በደስታ የሚሰጠውን ይወዳልና።" (2ኛ ቆሮ 9:7)</p>
         </div>
 
         <div class="main-button-container">
-            <button class="blessing-circle-btn" id="main-tap-btn"> <span class="btn-text">ቤተሳይዳ</span> <span class="btn-subtext">ለመባረክ/ለመስጠት ይንኩ</span> </button>
+            <button class="blessing-circle-btn" id="main-tap-btn">
+                <span class="btn-text">በእንተ ስማ ለማርያም</span>
+                <span class="btn-subtext">ስጦታ ለማበርከት እና ለመባረክ ይንኩ</span>
+            </button>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-box">
-                <span class="stat-title">የጋበዟቸው ሰዎች</span>
-                <span class="stat-value" id="referral-count">0</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-title">የእርስዎ ደረጃ</span>
-                <span class="stat-value" id="user-rank">#--</span>
-            </div>
+            <div class="stat-box"><span class="stat-title">የጋበዟቸው</span><span class="stat-value" id="referral-count">0</span></div>
+            <div class="stat-box"><span class="stat-title">የእርስዎ ደረጃ</span><span class="stat-value" id="user-rank">#--</span></div>
         </div>
 
         <div class="donation-drawer">
             <h3>የዕለቱ የበረከት ተሳትፎ</h3>
-            <p>በእለቱ የተመረጡትን አቅመ-ደካሞች ወይም አብያተ ክርስቲያናት በቀጥታ ይደግፉ።</p>
             <div class="payment-methods">
                 <button class="pay-btn cbe">CBE Birr</button>
                 <button class="pay-btn telebirr">Telebirr</button>
@@ -63,24 +68,22 @@
             </div>
             <div class="modal-body">
                 <label for="christian-name">የክርስትና ስም (ለፀሎት ለንባብ)፦</label>
-                <input type="text" id="christian-name" placeholder="ምሳሌ፦ ወልደ ማርያም..." required>
+                <input type="text" id="christian-name" placeholder="ምሳሌ፦ ወልደ ማርያም...">
 
                 <label for="prayer-reason">የማስፀለያ ምክንያት፦</label>
                 <select id="prayer-reason">
                     <option value="በረከት">ለበረከት እና ለጤና</option>
                     <option value="ምስጋና">ለምስጋና</option>
                     <option value="እረፍተ-ነፍስ">ለዕረፍተ ነፍስ (መታሰቢያ)</option>
-                    <option value="ልዩ">ለልዩ ጉዳይ</option>
                 </select>
 
-                <label>የመባ / የስጦታ መጠን (በብር)፦</label>
+                <label>የመባ መጠን (በብር)፦</label>
                 <div class="amount-options">
-                    <button class="amount-btn" data-amount="50">50 ብር</button>
+                    <button class="amount-btn" data-amount="50">50 ብр</button>
                     <button class="amount-btn active" data-amount="100">100 ብር</button>
                     <button class="amount-btn" data-amount="500">500 ብር</button>
                 </div>
-
-                <button class="submit-donation-btn" id="submit-donation">አበርክት (ክፈ can)</button>
+                <button class="submit-donation-btn" id="submit-donation">አበርክት</button>
             </div>
         </div>
     </div>
