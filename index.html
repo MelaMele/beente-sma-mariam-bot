@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div id="youtube-player" style="display:none;"></div>
+    <audio id="bg-mezmur" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
 
     <div class="app-container">
         <div class="audio-control-zone">
@@ -32,37 +34,46 @@
 
         <div class="holiday-card">
             <h2 id="ethiopian-date">ሰኔ 24 ቀን 2018 ዓ.ም</h2>
-            <h3 id="holiday-title">የዕለቱ ስንክሳር እና መታሰቢያ</h3>
+            <h3 id="holiday-title">የአቡነ ተክለሃይማኖት በዓል</h3>
             
             <div class="image-container">
                 <img id="holy-image" src="mary.jpg" alt="ስዕለ አድህኖ">
             </div>
 
             <div class="church-info-box">
-                <p id="sinksar-text"><b>📖 ዕለታዊ ስንክሳር፦</b> የጻድቅ መታሰቢያ ለበረከት ነው።</p>
-                <p id="gitsawe-text"><b>📜 የዕለቱ ግጻዌ (ምንባብ)፦</b> በመቅደስህ ውስጥ ምስጋና ይገባል።</p>
+                <p id="sinksar-text"><b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ታላቁ ጻድቅ አቡነ ተክለሃይማኖት በደብረ ሊባኖስ በጸሎት የቆሙበትና ገዳማውያንን የባረኩበት ታላቅ የዕረፍታቸው መታሰቢያ በዓል ነው።</p>
+                <p id="gitsawe-text"><b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ኤፌ. 6:10 | ንፍቅ፦ 2ኛ ጴጥ. 3:1 | ወንጌል፦ ማቴ. 19:27</p>
             </div>
             
-            <p id="scripture-quote">"እግዚአብሔር በደስታ የሚሰጠውን ይወዳልና።" (2ኛ ቆሮ 9:7)</p>
+            <div class="abew-teaching-box">
+                <h4>✨ የአበው ትምህርት እና ምክር</h4>
+                <p id="scripture-quote">“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ</p>
+            </div>
         </div>
 
         <div class="main-button-container">
             <button class="blessing-circle-btn" id="main-tap-btn">
                 <span class="btn-text">በእንተ ስማ ለማርያም</span>
-                <span class="btn-subtext">ስጦታ ለማበርከት እና ለመባረክ ይንኩ</span>
+                <span class="btn-subtext">በረከት ለመሰብሰብ ደጋግመው ይንኩ (Tap)</span>
             </button>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-box"><span class="stat-title">የጋበዟቸው</span><span class="stat-value" id="referral-count">0</span></div>
-            <div class="stat-box"><span class="stat-title">የእርስዎ ደረጃ</span><span class="stat-value" id="user-rank">#--</span></div>
+            <div class="stat-box" id="share-invite-btn" style="cursor: pointer; border: 1px solid gold;">
+                <span class="stat-title">👥 ምዕመናንን ጋብዝ</span>
+                <span class="stat-value" id="referral-count">0</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-title">🏅 የእርስዎ ደረጃ</span>
+                <span class="stat-value" id="user-rank">#1</span>
+            </div>
         </div>
 
         <div class="donation-drawer">
-            <h3>የዕለቱ የበረከት ተሳትፎ</h3>
+            <h3>የበረከት ማበርከቻ አካውንቶች (ለመቅዳት ይንኩ)</h3>
             <div class="payment-methods">
-                <button class="pay-btn cbe">CBE Birr</button>
-                <button class="pay-btn telebirr">Telebirr</button>
+                <button class="pay-btn cbe" id="cbe-pay-btn"><i class="fas fa-bank"></i> CBE: 1000379314396</button>
+                <button class="pay-btn telebirr" id="tele-pay-btn"><i class="fas fa-phone"></i> Telebirr: 0920628769</button>
             </div>
         </div>
     </div>
@@ -84,18 +95,11 @@
                     <option value="እረፍተ-ነፍስ">ለዕረፍተ ነፍስ (መታሰቢያ)</option>
                 </select>
 
-                <label>የመባ መጠን (በብር)፦</label>
-                <div class="amount-options">
-                    <button class="amount-btn" data-amount="50">50 ብр</button>
-                    <button class="amount-btn active" data-amount="100">100 ብር</button>
-                    <button class="amount-btn" data-amount="500">500 ብር</button>
-                </div>
-                <button class="submit-donation-btn" id="submit-donation">አበርክት</button>
+                <button class="submit-donation-btn" id="submit-donation">አበርክት (የመባ ዝርዝር መዝግብ)</button>
             </div>
         </div>
     </div>
 
     <script src="app.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>
