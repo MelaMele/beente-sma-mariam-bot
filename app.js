@@ -20,10 +20,10 @@ const mainTapBtn = document.getElementById('main-tap-btn');
 const closeModal = document.getElementById('close-modal');
 const amountButtons = document.querySelectorAll('.amount-btn');
 const submitDonationBtn = document.getElementById('submit-donation');
-const mezmur = document.getElementById('bg-mezmur');
 const musicToggleBtn = document.getElementById('music-toggle-btn');
 
 let selectedAmount = 100; // ነባሪ መባ
+let player; // የዩቲዩብ ማጫወቻ ተለዋዋጭ
 
 // 3. የዕለቱን በዓል፣ ስንክሳር እና ግጻዌ መጫኛ
 async function loadDailyBlessing() {
@@ -41,28 +41,12 @@ async function loadDailyBlessing() {
     }
 }
 
-// 4. መዝሙር ማጫወቻ ቁልፍ አሠራር
-if (musicToggleBtn) {
-    musicToggleBtn.addEventListener('click', () => {
-        if (mezmur.paused) {
-            mezmur.play();
-            musicToggleBtn.innerHTML = '<i class="fas fa-pause"></i> መዝሙር አቁም';
-            musicToggleBtn.style.background = '#ffd700';
-            musicToggleBtn.style.color = '#4A0E17';
-        } else {
-            mezmur.pause();
-            musicToggleBtn.innerHTML = '<i class="fas fa-music"></i> መዝሙር ክፈት';
-            musicToggleBtn.style.background = 'rgba(255,255,255,0.1)';
-            musicToggleBtn.style.color = '#ffffff';
-        }
-    });
-}
-let player;
+// 4. የዩቲዩብ አይፍሬም ኤፒአይ ማስነሻ (YouTube Iframe API)
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('youtube-player', {
         height: '0',
         width: '0',
-        videoId: 'iVIr0A9HULg', // ያንተ የመዝሙር ቪዲዮ ID
+        videoId: 'iVIr0A9HULg', // የዘማሪ ቴዎድሮስ ዮሴፍ መዝሙር ID
         playerVars: {
             'autoplay': 0,
             'loop': 1,
@@ -71,10 +55,11 @@ function onYouTubeIframeAPIReady() {
     });
 }
 
-// በመዝሙር ቁልፉ ላይ የነበረውን አሠራር በዚህ ቀይረው፦
+// 5. መዝሙር ማጫወቻ ቁልፍ አሠራር (አንድ ወጥ የተደረገ)
 if (musicToggleBtn) {
     musicToggleBtn.addEventListener('click', () => {
-        if (player && player.getPlayerState() !== 1) { // 1 ማለት እየተጫወተ ነው
+        // 1 ማለት የዩቲዩብ ቪዲዮው እየተጫወተ ነው ማለት ነው
+        if (player && player.getPlayerState() !== 1) { 
             player.playVideo();
             musicToggleBtn.innerHTML = '<i class="fas fa-pause"></i> መዝሙር አቁም';
             musicToggleBtn.style.background = '#ffd700';
@@ -87,7 +72,8 @@ if (musicToggleBtn) {
         }
     });
 }
-// 5. ክስተቶች (Event Listeners)
+
+// 6. ክስተቶች (Event Listeners)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
         if (blessingModal) blessingModal.classList.add('show');
