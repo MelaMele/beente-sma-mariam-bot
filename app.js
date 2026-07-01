@@ -57,7 +57,36 @@ if (musicToggleBtn) {
         }
     });
 }
+let player;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('youtube-player', {
+        height: '0',
+        width: '0',
+        videoId: 'iVIr0A9HULg', // ያንተ የመዝሙር ቪዲዮ ID
+        playerVars: {
+            'autoplay': 0,
+            'loop': 1,
+            'playlist': 'iVIr0A9HULg'
+        }
+    });
+}
 
+// በመዝሙር ቁልፉ ላይ የነበረውን አሠራር በዚህ ቀይረው፦
+if (musicToggleBtn) {
+    musicToggleBtn.addEventListener('click', () => {
+        if (player && player.getPlayerState() !== 1) { // 1 ማለት እየተጫወተ ነው
+            player.playVideo();
+            musicToggleBtn.innerHTML = '<i class="fas fa-pause"></i> መዝሙር አቁም';
+            musicToggleBtn.style.background = '#ffd700';
+            musicToggleBtn.style.color = '#4A0E17';
+        } else if (player) {
+            player.pauseVideo();
+            musicToggleBtn.innerHTML = '<i class="fas fa-music"></i> መዝሙር ክፈት';
+            musicToggleBtn.style.background = 'rgba(255,255,255,0.1)';
+            musicToggleBtn.style.color = '#ffffff';
+        }
+    });
+}
 // 5. ክስተቶች (Event Listeners)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
