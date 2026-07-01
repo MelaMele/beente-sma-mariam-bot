@@ -215,3 +215,21 @@ body {
     font-weight: bold;
     transition: all 0.3s ease;
 }
+.screenshot-upload-label {
+    display: block;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 215, 0, 0.4);
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+.screenshot-upload-label:hover {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: #ffd700;
+}
