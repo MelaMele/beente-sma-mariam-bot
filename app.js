@@ -1,71 +1,40 @@
-// 1. የቴሌግራም ዌብ አፕሊኬሽን ማስነሻ
 const tg = window.Telegram?.WebApp;
 if (tg) {
     tg.ready();
-    tg.expand(); // ገጹን ሙሉ ስክሪን ማድረግ
-    
-    // የተጠቃሚውን ስም ከቴሌግራም መውሰድ
+    tg.expand();
     const user = tg.initDataUnsafe?.user;
     if (user) {
         document.getElementById('user-name').innerText = user.first_name || "ክቡር ምዕመን";
-        if (user.username && document.getElementById('user-avatar')) {
-            document.getElementById('user-avatar').innerText = "🎁";
-        }
     }
 }
 
-// 2. የዶክመንት ኤለመንቶች ማገናኛ
 const blessingModal = document.getElementById('blessing-modal');
 const mainTapBtn = document.getElementById('main-tap-btn');
 const closeModal = document.getElementById('close-modal');
-const amountButtons = document.querySelectorAll('.amount-btn');
-const submitDonationBtn = document.getElementById('submit-donation');
 const musicToggleBtn = document.getElementById('music-toggle-btn');
+const mezmur = document.getElementById('bg-mezmur');
 
-let selectedAmount = 100; // ነባሪ መባ
-let player; // የዩቲዩብ ማጫወቻ ተለዋዋጭ
+// የክፍያ ቁልፎች
+const cbeBtn = document.getElementById('cbe-pay-btn');
+const teleBtn = document.getElementById('tele-pay-btn');
+const shareBtn = document.getElementById('share-invite-btn');
 
-// 3. የዕለቱን በዓል፣ ስንክሳር እና ግጻዌ መጫኛ
-async function loadDailyBlessing() {
-    try {
-        const response = await fetch('/api/daily-blessing'); 
-        if (response.ok) {
-            // ዛሬን ሰኔ 24 (የአቡነ ተክለሃይማኖት በዓል) በትክክል እንዲያሳይ እናስገድደዋለን
-            if(document.getElementById('ethiopian-date')) document.getElementById('ethiopian-date').innerText = "ሰኔ 24 ቀን 2018 ዓ.ም";
-            if(document.getElementById('holiday-title')) document.getElementById('holiday-title').innerText = "የአቡነ ተክለሃይማኖት ዓመታዊ መታሰቢያ በዓል";
-            if(document.getElementById('sinksar-text')) document.getElementById('sinksar-text').innerHTML = `<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ታላቁ ጻድቅ አቡነ ተክለሃይማኖት በደብረ ሊባኖስ በጸሎት የቆሙበትና ገዳማውያንን የባረኩበት ታላቅ የዕረፍታቸው መታሰቢያ በዓል ነው።`;
-            if(document.getElementById('gitsawe-text')) document.getElementById('gitsawe-text').innerHTML = `<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ኤፌ. 6:10 | ንፍቅ፦ 2ኛ ጴጥ. 3:1 | ወንጌል፦ ማቴ. 19:27`;
-        }
-    } catch (error) {
-        console.error("የቅዱሳት መጻሕፍት መረጃን መጫን አልተቻለም:", error);
-    }
-}
+let points = parseInt(localStorage.getItem('user_points')) || 0;
+let referrals = parseInt(localStorage.getItem('user_referrals')) || 0;
 
-// 4. የዩቲዩብ አይፍሬም ኤፒአይ ማስነሻ (YouTube Iframe API)
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('youtube-player', {
-        height: '0',
-        width: '0',
-        videoId: 'iVIr0A9HULg', // የዘማሪ ቴዎድሮስ ዮሴፍ መዝሙር ID
-        playerVars: {
-            'autoplay': 0,
-            'loop': 1,
-            'playlist': 'iVIr0A9HULg'
-        }
-    });
-}
+document.getElementById('user-points').innerText = points;
+document.getElementById('referral-count').innerText = referrals;
 
-// 5. መዝሙር ማጫወቻ ቁልፍ አሠራር (አንድ ወጥ የተደረገ)
-if (musicToggleBtn) {
+// 1. መዝሙር ማጫወቻ አሠራር
+if (musicToggleBtn && mezmur) {
     musicToggleBtn.addEventListener('click', () => {
-        // 1 ማለት የዩቲዩብ ቪዲዮው እየተጫወተ ነው ማለት ነው
-        if (player && player.getPlayerState() !== 1) { 
-            player.playVideo();
+        if (mezmur.paused) {
+            mezmur.play().catch(err => console.log("የኦዲዮ ስህተት:", err));
             musicToggleBtn.innerHTML = '<i class="fas fa-pause"></i> መዝሙር አቁም';
             musicToggleBtn.style.background = '#ffd700';
             musicToggleBtn.style.color = '#4A0E17';
-        } else if (player) {
-            player.pauseVideo();
+        } else {
+            mezmur.pause();
             musicToggleBtn.innerHTML = '<i class="fas fa-music"></i> መዝሙር ክፈት';
             musicToggleBtn.style.background = 'rgba(255,255,255,0.1)';
             musicToggleBtn.style.color = '#ffffff';
@@ -73,44 +42,67 @@ if (musicToggleBtn) {
     });
 }
 
-// 6. ክስተቶች (Event Listeners)
+// 2. Touch/Tap አሠራር ለዋናው ቁልፍ (ልክ እንደ Notcoin)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
-        if (blessingModal) blessingModal.classList.add('show');
+        points += 1;
+        document.getElementById('user-points').innerText = points;
+        localStorage.setItem('user_points', points);
+        
+        // የደረጃ ማሻሻያ (Rank Level up)
+        if (points > 500) document.getElementById('user-badge').innerText = "የበረከት ሊቅ";
+        else if (points > 100) document.getElementById('user-badge').innerText = "የበረከት ታጋይ";
+
         createFloatingPlusOne(e.clientX, e.clientY);
+    });
+    
+    // በረጅሙ ሲጫኑት ወይም በሁለተኛ አማራጭ ፎርሙን ለመክፈት (Double Click) ካስፈለገ
+    mainTapBtn.addEventListener('dblclick', () => {
+        if (blessingModal) blessingModal.classList.add('show');
+    });
+}
+
+// 3. የክፍያ አካውንቶችን ኮፒ ማድረጊያ ዘዴ
+if (cbeBtn) {
+    cbeBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText('1000379314396');
+        if(tg) tg.showPopup({title: 'የኢትዮጵያ ንግድ ባንክ', message: 'የአካውንት ቁጥር 1000379314396 ወደ ስልክዎ ኮፒ ተደርጓል!'});
+        else alert('CBE አካውንት ኮፒ ተደርጓል!');
+        if (blessingModal) blessingModal.classList.add('show');
+    });
+}
+
+if (teleBtn) {
+    teleBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText('0920628769');
+        if(tg) tg.showPopup({title: 'ቴሌብር', message: 'የአቅራቢው ስልክ ቁጥር 0920628769 ወደ ስልክዎ ኮፒ ተደርጓል!'});
+        else alert('የቴሌብር ስልክ ኮፒ ተደርጓል!');
+        if (blessingModal) blessingModal.classList.add('show');
+    });
+}
+
+// 4. የሪፈራል ግብዣ ሊንክ መፍጠሪያ ቁልፍ
+if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+        const botUsername = "beente_sma_mariam_bot"; // የቦትህ ትክክለኛ ዩዘርኔም
+        const userId = tg.initDataUnsafe?.user?.id || "member";
+        const inviteLink = `https://t.me/${botUsername}?start=ref_${userId}`;
+        
+        if (tg) {
+            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent("ወደ ቤተሳይዳ መንፈሳዊ በጎ አድራጎት መድረክ ይግቡና የበረከት ተሳታፊ ይሁኑ! ✨")}`);
+        } else {
+            navigator.clipboard.writeText(inviteLink);
+            alert("የመጋበዣ ሊንክዎ ኮፒ ሆኗል፦ " + inviteLink);
+        }
     });
 }
 
 if (closeModal) {
     closeModal.addEventListener('click', () => {
-        if (blessingModal) blessingModal.classList.remove('show');
+        blessingModal.classList.remove('show');
     });
 }
 
-amountButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        amountButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedAmount = btn.getAttribute('data-amount');
-    });
-});
-
-if (submitDonationBtn) {
-    submitDonationBtn.addEventListener('click', () => {
-        const christianName = document.getElementById('christian-name').value;
-        const reason = document.getElementById('prayer-reason').value;
-
-        if(!christianName) {
-            alert('እባክዎ የክርስትና ስምዎን ያስገቡ!');
-            return;
-        }
-
-        alert(`ተሳክቷል!\nየክርስትና ስም፡ ${christianName}\nምክንያት፡ ለ${reason}\nመጠን፡ ${selectedAmount} ብር\n\nየ"ቤተሳይዳ በጎ አድራጎት" ስጦታዎ በክብር ተመዝግቧል!`);
-        if (blessingModal) blessingModal.classList.remove('show');
-    });
-}
-
-// የ +1 ፍሎቲንግ አኒሜሽን መስሪያ
 function createFloatingPlusOne(x, y) {
     const el = document.createElement('div');
     el.className = 'floating-plus-one';
@@ -120,8 +112,3 @@ function createFloatingPlusOne(x, y) {
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 1000);
 }
-
-// ገጹ ልክ እንደተጫነ መረጃውን ዝግጁ ማድረግ
-document.addEventListener('DOMContentLoaded', () => {
-    loadDailyBlessing();
-});
