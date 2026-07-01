@@ -1,3 +1,4 @@
+/* 1. መሠረታዊ የገጽ አቀማመጥ (Global Styles) */
 body {
     margin: 0; padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -5,205 +6,23 @@ body {
     display: flex; justify-content: center; min-height: 100vh;
 }
 
-.app-container { width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; }
-
-/* 3D ሎጎ ስታይል */
-.header-zone { text-align: center; margin-bottom: 5px; }
-.logo-3d {
-    font-size: 26px; font-weight: 900; color: #ffd700; margin: 0 0 5px 0; letter-spacing: 1px;
-    text-shadow: 0 1px 0 #ccc, 0 2px 0 #c5c5c5, 0 3px 0 #bbb, 0 4px 0 #b0b0b0, 0 5px 0 #a0a0a0, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);
-}
-.sub-logo { font-size: 14px; color: #ffffff; font-weight: normal; text-shadow: none; display: block; opacity: 0.9; }
-
-/* መገለጫ */
-.user-profile { display: flex; align-items: center; background: rgba(255, 255, 255, 0.08); padding: 10px; border-radius: 12px; margin-top: 10px; }
-.avatar { font-size: 22px; margin-right: 10px; }
-.user-info h3 { margin: 0 0 2px 0; font-size: 15px; }
-.badge-row { display: flex; gap: 10px; align-items: center; }
-.badge { background: #ffd700; color: #4A0E17; padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: bold; }
-
-/* ካርድ እና ቤተክርስቲያን መረጃ ሳጥን */
-.holiday-card { background: rgba(255, 255, 255, 0.12); border-left: 4px solid #ffd700; padding: 12px; border-radius: 12px; text-align: center; }
-.holiday-card h2 { margin: 0; color: #ffd700; font-size: 16px; }
-.holiday-card h3 { margin: 5px 0; font-size: 14px; opacity: 0.9; }
-
-.image-container { width: 100%; height: 180px; border-radius: 8px; overflow: hidden; margin: 8px 0; border: 1px solid rgba(255, 215, 0, 0.3); }
-.image-container img { width: 100%; height: 100%; object-fit: contain; }
-
-.church-info-box { background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 6px; text-align: left; font-size: 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; }
-.church-info-box p { margin: 0; line-height: 1.4; }
-#scripture-quote { font-size: 12px; font-style: italic; margin: 0; color: #ffd700; }
-
-/* "በእንተ ስማ ለማርያም" ቁልፍ */
-.main-button-container { display: flex; justify-content: center; margin: 5px 0; }
-.blessing-circle-btn {
-    width: 150px; height: 150px; border-radius: 50%; border: 6px solid #ffd700;
-    background: radial-gradient(circle, #6B1521 0%, #4A0E17 100%); color: #ffd700; font-weight: bold;
-    cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.1s ease;
-}
-.blessing-circle-btn:active { transform: scale(0.95); }
-.btn-text { font-size: 14px; text-align: center; font-weight: bold; }
-.btn-subtext { font-size: 9px; color: #ffffff; opacity: 0.8; margin-top: 4px; text-align: center; padding: 0 5px; }
-
-/* ሌላ ስታይሎች */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.stat-box { background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-.stat-title { font-size: 11px; opacity: 0.7; display: block; }
-.stat-value { font-size: 15px; font-weight: bold; color: #ffd700; }
-.donation-drawer { background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px; text-align: center; }
-.donation-drawer h3 { margin: 0 0 6px 0; color: #ffd700; font-size: 14px; }
-.payment-methods { display: flex; justify-content: center; gap: 10px; }
-.pay-btn { padding: 6px 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px; }
-.pay-btn.cbe { background: #0066b2; color: white; }
-.pay-btn.telebirr { background: #ea1c24; color: white; }
-
-/* ፎርሙ መክፈቻ */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-.modal-overlay.show { opacity: 1; pointer-events: auto; }
-.modal-content { background: #5c121d; width: 90%; max-width: 360px; border-radius: 16px; border: 2px solid #ffd700; padding: 20px; box-sizing: border-box; }
-.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,215,0,0.2); padding-bottom: 10px; }
-.modal-header h3 { margin: 0; color: #ffd700; }
-.close-modal-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
-.modal-body { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
-.modal-body label { font-size: 13px; color: #ffd700; }
-.modal-body input, .modal-body select { padding: 10px; border-radius: 8px; border: 1px solid #ffd700; background: #4A0E17; color: white; font-size: 14px; }
-.amount-options { display: flex; gap: 10px; justify-content: space-between; }
-.amount-btn { flex: 1; padding: 8px; border: 1px solid #ffd700; background: none; color: white; border-radius: 8px; cursor: pointer; font-size: 12px; }
-.amount-btn.active, .amount-btn:hover { background: #ffd700; color: #4A0E17; font-weight: bold; }
-.submit-donation-btn { background: #ffd700; color: #4A0E17; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; }
-
-.floating-plus-one { position: fixed; color: #ffd700; font-size: 28px; font-weight: bold; pointer-events: none; animation: floatUpAndFade 1s ease-out forwards; z-index: 9999; }
-@keyframes floatUpAndFade { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(1.3); } }
-
-/* መገለጫ */
-.user-profile {
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 12px;
-    border-radius: 12px;
+.app-container { 
+    width: 100%; 
+    max-width: 420px; 
+    padding: 15px; 
+    box-sizing: border-box; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
 }
 
-.avatar { font-size: 24px; margin-right: 12px; }
-.user-info h3 { margin: 0 0 5px 0; font-size: 16px; }
-.badge-row { display: flex; gap: 10px; align-items: center; }
-.badge { background: #ffd700; color: #4A0E17; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-
-/* አዲሱ የበዓል እና የስዕለ አድህኖ ካርድ */
-/* የተስተካከለው የካርድ እና የስዕል ስታይል */
-.holiday-card {
-    background: rgba(255, 255, 255, 0.12);
-    border-left: 4px solid #ffd700;
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
-}
-
-.image-container {
-    width: 100%;
-    height: 220px; /* 👈 ቁመቱ ከ 130 ወደ 220 ከፍ ብሏል ስዕሉ እንዲታይ! */
-    border-radius: 8px;
-    overflow: hidden;
-    margin: 10px 0;
-    border: 1px solid rgba(255, 215, 0, 0.4);
-    background-color: rgba(0, 0, 0, 0.3); /* ስዕሉ እስኪመጣ ጥቁር ዳራ ይሰጠዋል */
-}
-
-.image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* 👈 ስዕሉ ሳይቆረጥ ሙሉ በሙሉ እንዲታይ ያደርጋል */
-}
-
-#scripture-quote { font-size: 13px; font-style: italic; margin: 5px 0 0 0; opacity: 0.9; }
-
-/* ክብ ቁልፍ */
-.main-button-container {
-    display: flex;
-    justify-content: center;
-    margin: 10px 0;
-}
-
-.blessing-circle-btn {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    border: 6px solid #ffd700;
-    background: radial-gradient(circle, #6B1521 0%, #4A0E17 100%);
-    color: #ffd700;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.1s ease;
-}
-
-.blessing-circle-btn:active { transform: scale(0.95); }
-.btn-text { font-size: 15px; }
-.btn-subtext { font-size: 10px; color: #ffffff; opacity: 0.8; margin-top: 3px; }
-
-/* ስታቲስቲክስ */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.stat-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-.stat-title { font-size: 11px; opacity: 0.7; display: block; }
-.stat-value { font-size: 16px; font-weight: bold; color: #ffd700; }
-
-/* የልገሳ ሳጥን */
-.donation-drawer { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 12px; text-align: center; }
-.donation-drawer h3 { margin: 0 0 4px 0; color: #ffd700; font-size: 15px; }
-.donation-drawer p { font-size: 11px; margin: 0 0 8px 0; opacity: 0.8; }
-.payment-methods { display: flex; justify-content: center; gap: 10px; }
-.pay-btn { padding: 8px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
-.pay-btn.cbe { background: #0066b2; color: white; }
-.pay-btn.telebirr { background: #ea1c24; color: white; }
-
-/* ፎርሙ መክፈቻ (Modal Overlay) */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 10000;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.modal-overlay.show { opacity: 1; pointer-events: auto; }
-
-.modal-content {
-    background: #5c121d;
-    width: 90%; max-width: 360px;
-    border-radius: 16px;
-    border: 2px solid #ffd700;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,215,0,0.2); padding-bottom: 10px; }
-.modal-header h3 { margin: 0; color: #ffd700; }
-.close-modal-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
-
-.modal-body { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
-.modal-body label { font-size: 13px; color: #ffd700; }
-.modal-body input, .modal-body select { padding: 10px; border-radius: 8px; border: 1px solid #ffd700; background: #4A0E17; color: white; font-size: 14px; }
-
-.amount-options { display: flex; gap: 10px; justify-content: space-between; }
-.amount-btn { flex: 1; padding: 8px; border: 1px solid #ffd700; background: none; color: white; border-radius: 8px; cursor: pointer; font-size: 12px; }
-.amount-btn.active, .amount-btn:hover { background: #ffd700; color: #4A0E17; font-weight: bold; }
-
-.submit-donation-btn { background: #ffd700; color: #4A0E17; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; }
-
-/* Floating +1 animation */
-.floating-plus-one { position: fixed; color: #ffd700; font-size: 28px; font-weight: bold; pointer-events: none; animation: floatUpAndFade 1s ease-out forwards; z-index: 9999; }
-@keyframes floatUpAndFade { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(1.3); } }
+/* 2. መዝሙር መቆጣጠሪያ (Audio Control) */
 .audio-control-zone {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 5px;
 }
+
 .music-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 215, 0, 0.3);
@@ -215,6 +34,124 @@ body {
     font-weight: bold;
     transition: all 0.3s ease;
 }
+
+/* 3. 3D ሎጎ ስታይል (Header Zone) */
+.header-zone { text-align: center; margin-bottom: 5px; }
+.logo-3d {
+    font-size: 26px; font-weight: 900; color: #ffd700; margin: 0 0 5px 0; letter-spacing: 1px;
+    text-shadow: 0 1px 0 #ccc, 0 2px 0 #c5c5c5, 0 3px 0 #bbb, 0 4px 0 #b0b0b0, 0 5px 0 #a0a0a0, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);
+}
+.sub-logo { font-size: 14px; color: #ffffff; font-weight: normal; text-shadow: none; display: block; opacity: 0.9; }
+
+/* 4. የተጠቃሚ መገለጫ (User Profile) */
+.user-profile { 
+    display: flex; 
+    align-items: center; 
+    background: rgba(255, 255, 255, 0.1); 
+    padding: 12px; 
+    border-radius: 12px; 
+    margin-top: 10px; 
+}
+.avatar { font-size: 24px; margin-right: 12px; }
+.user-info h3 { margin: 0 0 5px 0; font-size: 16px; }
+.badge-row { display: flex; gap: 10px; align-items: center; }
+.badge { background: #ffd700; color: #4A0E17; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+.points-badge { font-size: 13px; font-weight: bold; color: #ffd700; }
+
+/* 5. የዕለቱ በዓል እና የበረከት ካርድ (Holiday Card) */
+.holiday-card { 
+    background: rgba(255, 255, 255, 0.12); 
+    border-left: 4px solid #ffd700; 
+    padding: 15px; 
+    border-radius: 12px; 
+    text-align: center; 
+}
+.holiday-card h2 { margin: 0; color: #ffd700; font-size: 16px; }
+.holiday-card h3 { margin: 5px 0; font-size: 14px; opacity: 0.9; }
+
+/* ስዕለ አድህኖ ሳጥን */
+.image-container { 
+    width: 100%; 
+    height: 220px; 
+    border-radius: 8px; 
+    overflow: hidden; 
+    margin: 10px 0; 
+    border: 1px solid rgba(255, 215, 0, 0.4); 
+    background-color: rgba(0, 0, 0, 0.3); 
+}
+.image-container img { width: 100%; height: 100%; object-fit: contain; }
+
+/* የስንክሳር እና ግጻዌ ሳጥን */
+.church-info-box { 
+    background: rgba(0, 0, 0, 0.2); 
+    padding: 10px; 
+    border-radius: 8px; 
+    text-align: left; 
+    font-size: 12px; 
+    margin-bottom: 8px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+}
+.church-info-box p { margin: 0; line-height: 1.4; }
+
+/* የአበው ምክር */
+.abew-teaching-box {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 215, 0, 0.15);
+    text-align: left;
+}
+.abew-teaching-box h4 { margin: 0 0 5px 0; color: #ffd700; font-size: 13px; }
+#scripture-quote { font-size: 13px; font-style: italic; margin: 0; color: #ffffff; opacity: 0.9; }
+
+/* 6. "በእንተ ስማ ለማርያም" የንክኪ ቁልፍ (Touch/Tap Button) */
+.main-button-container { display: flex; justify-content: center; margin: 10px 0; }
+.blessing-circle-btn {
+    width: 160px; height: 160px; border-radius: 50%; border: 6px solid #ffd700;
+    background: radial-gradient(circle, #6B1521 0%, #4A0E17 100%); color: #ffd700; font-weight: bold;
+    cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.1s ease;
+}
+.blessing-circle-btn:active { transform: scale(0.95); }
+.btn-text { font-size: 15px; text-align: center; font-weight: bold; }
+.btn-subtext { font-size: 10px; color: #ffffff; opacity: 0.8; margin-top: 3px; text-align: center; }
+
+/* 7. ስታቲስቲክስ (Stats Grid) */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+.stat-title { font-size: 11px; opacity: 0.7; display: block; }
+.stat-value { font-size: 16px; font-weight: bold; color: #ffd700; }
+
+/* 8. የበረከት ማበርከቻ አካውንቶች (Donation Drawer) */
+.donation-drawer { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 12px; text-align: center; }
+.donation-drawer h3 { margin: 0 0 6px 0; color: #ffd700; font-size: 14px; }
+.payment-methods { display: flex; justify-content: center; gap: 10px; }
+.pay-btn { padding: 8px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; transition: opacity 0.2s; }
+.pay-btn:active { opacity: 0.8; }
+.pay-btn.cbe { background: #0066b2; color: white; }
+.pay-btn.telebirr { background: #ea1c24; color: white; }
+
+/* 9. ፎርም መክፈቻ ሳጥን (Modal Overlay & Content) */
+.modal-overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center; 
+    z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
+}
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+.modal-content { 
+    background: #5c121d; width: 90%; max-width: 360px; 
+    border-radius: 16px; border: 2px solid #ffd700; padding: 20px; box-sizing: border-box; 
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,215,0,0.2); padding-bottom: 10px; }
+.modal-header h3 { margin: 0; color: #ffd700; }
+.close-modal-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+
+.modal-body { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+.modal-body label { font-size: 13px; color: #ffd700; }
+.modal-body input, .modal-body select { padding: 10px; border-radius: 8px; border: 1px solid #ffd700; background: #4A0E17; color: white; font-size: 14px; }
+
+/* ስክሪንሾት መጫኛ ቁልፍ ስታይል */
 .screenshot-upload-label {
     display: block;
     background: rgba(255, 255, 255, 0.05);
@@ -224,7 +161,7 @@ body {
     border-radius: 8px;
     text-align: center;
     cursor: pointer;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-size: 12px;
     font-weight: bold;
     transition: all 0.3s ease;
@@ -233,3 +170,9 @@ body {
     background: rgba(255, 215, 0, 0.1);
     border-color: #ffd700;
 }
+
+.submit-donation-btn { background: #ffd700; color: #4A0E17; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; }
+
+/* 10. ተንሳፋፊ ሳንቲም አኒሜሽን (+1 Animation) */
+.floating-plus-one { position: fixed; color: #ffd700; font-size: 28px; font-weight: bold; pointer-events: none; animation: floatUpAndFade 1s ease-out forwards; z-index: 9999; }
+@keyframes floatUpAndFade { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(1.3); } }
