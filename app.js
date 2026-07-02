@@ -9,54 +9,79 @@ if (tg) {
     if (user) {
         telegramUserId = user.id;
         const userNameEl = document.getElementById('user-name');
-        // ተጠቃሚው የሊቀ ጳጳሳት ወይም የስም መደበቂያ ካለው first_name እና last_name በመጠቀም ሙሉ ስም ማሳየት
         if (userNameEl) userNameEl.innerText = `${user.first_name || ""} ${user.last_name || ""}`.trim() || "ክቡር ምዕመን";
     } else {
-        // በብሮውዘር ለሚሞክሩ ሰዎች ስህተት እንዳያሳይ
-        if (document.getElementById('user-name')) document.getElementById('user-name').innerText = "ክቡር ምዕመን (ውጭ)";
+        if (document.getElementById('user-name')) document.getElementById('user-name').innerText = "ክቡር ምዕመን";
     }
 }
 
-// 2. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ (Array)
+// 2. 💡 አዲሱ የፈረንጅ ቀንን ወደ ኢትዮጵያ ቀን መቀየሪያ ቀመር (Simple Gregorian to Ethiopian Converter)
+function getEthiopianDate() {
+    const now = new Date();
+    let gYear = now.getFullYear();
+    let gMonth = now.getMonth() + 1;
+    let gDay = now.getDate();
+
+    // ለአሁኑ (ለ2026 እ.ኤ.አ) የሰኔ ወርን ለማስላት የሚያገለግል ቀመር
+    // June 8 = ሰኔ 1 | June 25 = ሰኔ 18 | July 1 = ሰኔ 24 | July 2 = ሰኔ 25 | July 3 = ሰኔ 26
+    let ethMonth = 10; // ሰኔ መደበኛ 10ኛ ወር ነው
+    let ethDay = 1;
+    let ethYear = gYear - 8; // በተለምዶ 8 ዓመት ወደኋላ
+
+    // በጁላይ (July) ወር ውስጥ ከሆንን
+    if (gMonth === 7) {
+        ethDay = gDay + 23; // July 1 = ሰኔ 24 (1 + 23)
+        if (ethDay > 30) {
+            ethDay = ethDay - 30;
+            ethMonth = 11; // ሐምሌ
+        }
+    } 
+    // በጁን (June) ወር ውስጥ ከሆንን
+    else if (gMonth === 6) {
+        if (gDay >= 8) {
+            ethDay = gDay - 7; // June 8 = ሰኔ 1 (8 - 7)
+        } else {
+            ethMonth = 9; // ግንቦት
+            ethDay = gDay + 24;
+        }
+    }
+
+    return { month: ethMonth, day: ethDay, year: ethYear };
+}
+
+// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ (Array)
+// ማስታወሻ፦ እዚህ ላይ "10_24" ማለት 10ኛ ወር (ሰኔ) 24 ቀን ማለት ነው
 const dailySpiritualData = {
-    // ሰኔ 24 (ምሳሌ የነበረው)
-    "6_24": {
+    "10_24": {
         date: "ሰኔ 24 ቀን 2018 ዓ.ም",
         holiday: "የአቡነ ተክለሃይማኖት በዓል",
         sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ታላቁ ጻድቅ አቡነ ተክለሃይማኖት በደብረ ሊባኖስ በጸሎት የቆሙበትና ገዳማውያንን የባረኩበት ታላቅ የዕረፍታቸው መታሰቢያ በዓል ነው።",
         gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ኤፌ. 6:10 | ንፍቅ፦ 2ኛ ጴጥ. 3:1 | ወንጌል፦ ማቴ. 19:27",
         quote: "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ"
     },
-    // ሰኔ 25
-    "6_25": {
+    "10_25": {
         date: "ሰኔ 25 ቀን 2018 ዓ.ም",
         holiday: "ቅዱስ ይሁዳ ሐዋርያ",
         sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ከ72ቱ አርድእት አንዱ የሆነውና ጌታችንን በታማኝነት ያገለገለው ቅዱስ ይሁዳ ሐዋርያ የሰማዕትነት አክሊል የተቀበለበት ዕለት ነው።",
         gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ይሁዳ 1:1 | ንፍቅ፦ 1ኛ ዮሐ. 2:1 | ወንጌል፦ ሉቃ. 10:1",
         quote: "“በፈተና ውስጥ ስትሆን ተስፋ አትቁረጥ፤ ይልቁንም ወደ እግዚአብሔር ጩኽ። እርሱ ቅርብ ነውና።” — ቅዱስ ኤፍሬም ሶርያዊ"
     },
-    // ሰኔ 26
-    "6_26": {
+    "10_26": {
         date: "ሰኔ 26 ቀን 2018 ዓ.ም",
         holiday: "ቅዱስ ያዕቆብ ዘንሲቢን",
         sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> የታላቁ የንሲቢን ኤጲስቆጶስ ቅዱስ ያዕቆብ መታሰቢያ ነው። በጸሎቱ ድንቆችን ያደረገ እና የኒቅያ ጉባኤ ተካፋይ የነበረ አባት ነው።",
         gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ 1ኛ ቆሮ. 4:9 | ንፍቅ፦ ያዕ. 5:13 | ወንጌል፦ ዮሐ. 10:11",
         quote: "“ጸሎት ማለት ከእግዚአብሔር ጋር መነጋገር ነው። በጸሎት ጊዜ ልብህ ከምድር ይልቅ ወደ ሰማይ ይቅረብ።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
     }
-    // 💡 ማስታወሻ፦ እዚህ ላይ የቀሩትን ቀኖች በተመሳሳይ መልክ መሙላት ይቻላል።
 };
 
-// 3. የዕለቱን መረጃ በራስ-ሰር አውጥቶ አፕሊኬሽኑ ላይ የሚቀይር አሠራር
+// 4. የዕለቱን መረጃ በራስ-ሰር አውጥቶ አፕሊኬሽኑ ላይ የሚቀይር አሠራር
 function updateDailyContent() {
-    const today = new Date();
-    // ለጊዜው በፈረንጅ ቀን ላይ ተመስርቶ በየቀኑ እንዲቀያየር (ወደፊት በኢትዮጵያ ካላንደር ቀመር ይተካል)
-    const day = today.getDate(); 
-    const month = today.getMonth() + 1; // ጃቫስክሪፕት ወራትን ከ0 ነው የሚጀምረው
+    const ethDate = getEthiopianDate();
+    const dataKey = `${ethDate.month}_${ethDate.day}`;
     
-    // ለምሳሌ ዛሬ ሰኔ 25 (June 25) ከሆነ የ "6_25" ዳታን ይፈልጋል
-    // ለአሁኑ ፈተና እንዲሆንህ ከሰኔ 24 እስከ 26 ባሉት ቀናት ይፈራረቃል፤ ከሌለ መደበኛውን ሰኔ 24 ያሳያል
-    const dataKey = dailySpiritualData[`6_${day}`] ? `6_${day}` : "6_24";
-    const todayData = dailySpiritualData[dataKey];
+    // የዛሬው ቀን በዳታቤዛችን ውስጥ ካለ እሱን ያሳያል፣ ከሌለ ግን መደበኛውን የሰኔ 24 ያሳያል
+    const todayData = dailySpiritualData[dataKey] ? dailySpiritualData[dataKey] : dailySpiritualData["10_24"];
 
     if (document.getElementById('ethiopian-date')) document.getElementById('ethiopian-date').innerText = todayData.date;
     if (document.getElementById('holiday-title')) document.getElementById('holiday-title').innerText = todayData.holiday;
@@ -68,8 +93,7 @@ function updateDailyContent() {
 // አፑ ሲከፈት ቀኑን ቀይር
 updateDailyContent();
 
-
-// 4. ሁሉንም የዶክመንት ኤለመንቶች ከላይ በቅደም ተከተል ማገናኛ
+// 5. ሁሉንም የዶክመንት ኤለመንቶች ከላይ በቅደም ተከተል ማገናኛ
 const blessingModal = document.getElementById('blessing-modal');
 const mainTapBtn = document.getElementById('main-tap-btn');
 const closeModal = document.getElementById('close-modal');
@@ -89,7 +113,7 @@ let referrals = parseInt(localStorage.getItem('user_referrals')) || 0;
 if (document.getElementById('user-points')) document.getElementById('user-points').innerText = points;
 if (document.getElementById('referral-count')) document.getElementById('referral-count').innerText = referrals;
 
-// 5. ፋይል (ስክሪንሾት) ሲመረጥ ስሙን እንዲያሳይ ማድረግ
+// 6. ፋይል (ስክሪንሾት) ሲመረጥ ስሙን እንዲያሳይ ማድረግ
 if (fileInput && fileText) {
     fileInput.addEventListener('change', function() {
         if (this.files && this.files.length > 0) {
@@ -100,7 +124,7 @@ if (fileInput && fileText) {
     });
 }
 
-// 6. አበርክት የሚለው ቁልፍ ሲነካ መረጃ መመዝገቢያ
+// 7. አበርክት የሚለው ቁልፍ ሲነካ መረጃ መመዝገቢያ
 if (submitDonationBtn) {
     submitDonationBtn.addEventListener('click', () => {
         const christianName = document.getElementById('christian-name').value;
@@ -120,7 +144,7 @@ if (submitDonationBtn) {
     });
 }
 
-// 7. መዝሙር ማጫወቻ አሠራር
+// 8. መዝሙር ማጫወቻ አሠራር
 if (musicToggleBtn && mezmur) {
     musicToggleBtn.addEventListener('click', () => {
         if (mezmur.paused) {
@@ -137,7 +161,7 @@ if (musicToggleBtn && mezmur) {
     });
 }
 
-// 8. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
+// 9. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
         points += 1;
@@ -158,7 +182,7 @@ if (mainTapBtn) {
     });
 }
 
-// 9. የክፍያ አካውንቶችን ኮፒ ማድረጊያ ዘዴ
+// 10. የክፍያ አካውንቶችን ኮፒ ማድረጊያ ዘዴ
 if (cbeBtn) {
     cbeBtn.addEventListener('click', () => {
         navigator.clipboard.writeText('1000379314396');
@@ -177,10 +201,10 @@ if (teleBtn) {
     });
 }
 
-// 10. የሪፈራል ግብዣ ሊንክ መፍጠሪያ ቁልፍ (ትክክለኛው የቦት ስም ተተክቷል)
+// 11. የሪፈራል ግብዣ ሊንክ መፍጠሪያ ቁልፍ
 if (shareBtn) {
     shareBtn.addEventListener('click', () => {
-        const botUsername = "BeenteSmaMariam_bot"; // 👈 ካፒታል ሌተሮቹ በትክክል ተስተካክለዋል!
+        const botUsername = "BeenteSmaMariam_bot"; 
         const inviteLink = `https://t.me/${botUsername}?start=ref_${telegramUserId}`;
         
         if (tg) {
