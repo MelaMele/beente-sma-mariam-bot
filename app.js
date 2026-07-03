@@ -140,7 +140,7 @@ if (submitDonationBtn) {
     });
 }
 
-// 8. መዝሙር ማጫወቻ አሠራር (ከአውቶፕሌይ ማረጋገጫ ጋር)
+// 8. መዝሙር ማጫወቻ አሠራር (የተስተካከለ)
 function updateMusicButtonState() {
     if (!mezmur || !musicToggleBtn) return;
     if (mezmur.paused) {
@@ -168,9 +168,9 @@ if (musicToggleBtn && mezmur) {
 // 9. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
-        // የብሮውዘር አውቶፕሌይ ፖሊሲን ለማለፍ ተጠቃሚው መጀመሪያ ሲነካ መዝሙሩን ለማስጀመር መሞከር
+        // 💡 ብሮውዘሩ አውቶፕሌይ ከከለከለ፣ ተጠቃሚው መጀመሪያ ቁልፉን ሲነካ መዝሙሩን ያስጀምረዋል
         if (mezmur && mezmur.paused) {
-            mezmur.play().then(updateMusicButtonState).catch(() => {});
+            mezmur.play().then(updateMusicButtonState).catch(err => console.log("አውቶፕሌይ ተከልክሏል፦", err));
         }
 
         points += 1;
