@@ -3,105 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <title>በእንተ ስማ ለማርያም በጎ አድራጎት</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <audio id="bg-mezmur" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
-    </audio>
+
+    <audio id="bg-mezmur" src="assets/mezmur.mp3" loop></audio>
 
     <div class="app-container">
+        
         <div class="audio-control-zone">
-            <button id="music-toggle-btn" class="music-btn"><i class="fas fa-music"></i> መዝሙር ክፈት</button>
+            <button id="music-toggle-btn" class="music-btn">
+                <i class="fas fa-music"></i> መዝሙር ክፈት
+            </button>
         </div>
 
         <div class="header-zone">
-            <h1 class="logo-3d">ቤተሳይዳ<br><span class="sub-logo">መንፈሳዊ በጎ አድራጎት</span></h1>
-            <div class="user-profile">
-                <div class="avatar" id="user-avatar">🎁</div>
-                <div class="user-info">
-                    <h3 id="user-name">ክቡር ምዕመን</h3>
-                    <div class="badge-row">
-                        <span class="badge" id="user-badge">የበረከት ጀማሪ</span>
-                        <span class="points-badge">🪙 <span id="user-points">0</span></span>
-                    </div>
+            <h1 class="logo-3d">ቤተሳይዳ</h1>
+            <span class="sub-logo">የሕጻናትና አረጋውያን መርጃ መንፈሳዊ ማኅበር</span>
+        </div>
+
+        <div class="user-profile">
+            <div class="avatar">✨</div>
+            <div class="user-info">
+                <h3 id="user-name">ክቡር ምዕመን</h3>
+                <div class="badge-row">
+                    <span id="user-badge" class="badge">የበረከት ጀማሪ</span>
                 </div>
             </div>
         </div>
 
         <div class="holiday-card">
             <h2 id="ethiopian-date">ሰኔ 24 ቀን 2018 ዓ.ም</h2>
-            <h3 id="holiday-title">የአቡነ ተክለሃይማኖት በዓል</h3>
+            <h3 id="holiday-title">የዕለቱ መታሰቢያ በዓል</h3>
             
             <div class="image-container">
-                <img id="holy-image" src="mary.jpg" alt="ስዕለ አድህኖ">
+                <img src="assets/saint-image.jpg" alt="ስዕለ አድህኖ">
             </div>
 
             <div class="church-info-box">
-                <p id="sinksar-text"><b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ታላቁ ጻድቅ አቡነ ተክለሃይማኖት በደብረ ሊባኖስ በጸሎት የቆሙበትና ገዳማውያንን የባረኩበት ታላቅ የዕረፍታቸው መታሰቢያ በዓል ነው።</p>
-                <p id="gitsawe-text"><b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ኤፌ. 6:10 | ንፍቅ፦ 2ኛ ጴጥ. 3:1 | ወንጌል፦ ማቴ. 19:27</p>
-            </div>
-            
-            <div class="abew-teaching-box">
-                <h4>✨ የአበው ትምህርት እና ምክር</h4>
-                <p id="scripture-quote">“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ</p>
+                <p id="sinksar-text">📖 ዕለታዊ ስንክሳር በመጫን ላይ...</p>
+                <p id="gitsawe-text">📜 የዕለቱ ግጻዌ በመጫን ላይ...</p>
+                <div class="abew-teaching-box">
+                    <h4>💡 የአበው ምክር</h4>
+                    <p id="scripture-quote">ምክረ አበው በመጫን ላይ...</p>
+                </div>
             </div>
         </div>
 
         <div class="main-button-container">
-            <button class="blessing-circle-btn" id="main-tap-btn">
-                <span class="btn-text">በእንተ ስማ ለማርያም</span>
-                <span class="btn-subtext">በረከት ለመሰብሰብ ደጋግመው ይንኩ (Tap)</span>
+            <button id="main-tap-btn" class="blessing-circle-btn">
+                <span class="btn-text">በእንተ ስማ<br>ለማርያም</span>
+                <span class="btn-subtext">እዚህ ይንኩ 🪙</span>
             </button>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-box" id="share-invite-btn" style="cursor: pointer; border: 1px solid gold;">
-                <span class="stat-title">👥 ምዕመናንን ጋብዝ</span>
-                <span class="stat-value" id="referral-count">0</span>
+            <div class="stat-box">
+                <span class="stat-title">የተሰበሰበ በረከት</span>
+                <span id="user-points" class="stat-value">0</span> 🪙
             </div>
             <div class="stat-box">
-                <span class="stat-title">🏅 የእርስዎ ደረጃ</span>
-                <span class="stat-value" id="user-rank">#1</span>
+                <span class="stat-title">የጋበዟቸው ምዕመናን</span>
+                <span id="referral-count" class="stat-value">0</span> 👥
             </div>
         </div>
 
         <div class="donation-drawer">
-            <h3>የበረከት ማበርከቻ አካውንቶች (ለመቅዳት ይንኩ)</h3>
-            <div class="payment-methods">
-                <button class="pay-btn cbe" id="cbe-pay-btn"><i class="fas fa-bank"></i> CBE: 1000379314396</button>
-                <button class="pay-btn telebirr" id="tele-pay-btn"><i class="fas fa-phone"></i> Telebirr: 0920628769</button>
-            </div>
+            <button id="share-invite-btn" class="submit-donation-btn" style="width: 100%; margin: 0;">
+                <i class="fas fa-user-plus"></i> ምዕመናንን ይጋብዙ (በረከት ያትርፉ)
+            </button>
         </div>
+
     </div>
 
-    <div class="modal-overlay" id="blessing-modal">
+    <div id="blessing-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>የዕለቱ የበረከት ስጦታ</h3>
-                <button class="close-modal-btn" id="close-modal">&times;</button>
+                <h3>✨ የበረከት ማበርከቻ</h3>
+                <button id="close-modal" class="close-modal-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <label for="christian-name">የክርስትና ስም (ለፀሎት ለንባብ)፦</label>
-                <input type="text" id="christian-name" placeholder="ምሳሌ፦ ወልደ ማርያም...">
+                <label><i class="fas fa-user-grace"></i> የክርስትና ስም</label>
+                <input type="text" id="christian-name" placeholder="ምሳሌ፦ ወልደ ማርያም">
 
-                <label for="prayer-reason">የማስፀለያ ምክንያት፦</label>
+                <label><i class="fas fa-heart"></i> የሚጸለይበት ምክንያት</label>
                 <select id="prayer-reason">
-                    <option value="በረከት">ለበረከት እና ለጤና</option>
-                    <option value="ምስጋና">ለምስጋና</option>
-                    <option value="እረፍተ-ነፍስ">ለዕረፍተ ነፍስ (መታሰቢያ)</option>
+                    <option value="ጤና">ለጤና እና ለሕይወት</option>
+                    <option value="በረከት">ለቤት በረከት</option>
+                    <option value="ልጅ">ልጅ ላጡ መታሰቢያ</option>
+                    <option value="ለማረፉ">ላረፉ እረፍተ ነፍስ</option>
+                    <option value="ሌላ">ለሌላ ልዩ ፍላጎት</option>
                 </select>
 
+                <label><i class="fas fa-university"></i> 1ኛ. መዋጮ የሚያደርጉበትን አካውንት ይምረጡና ኮፒ ያድርጉ</label>
+                <div class="payment-methods" style="margin-bottom: 10px;">
+                    <button type="button" id="cbe-pay-btn" class="pay-btn cbe"><i class="fas fa-copy"></i> CBE አካውንት</button>
+                    <button type="button" id="tele-pay-btn" class="pay-btn telebirr"><i class="fas fa-copy"></i> ቴሌብር ቁጥር</button>
+                </div>
+
+                <label><i class="fas fa-camera"></i> 2ኛ. የከፈሉበትን ማረጋገጫ (Screenshot) ይጫኑ</label>
                 <label for="receipt-screenshot" class="screenshot-upload-label">
-                    <i class="fas fa-camera"></i> የክፍያ ማረጋገጫ ስክሪንሾት ይጫኑ (ግዴታ አይደለም)
+                    <i class="fas fa-cloud-upload-alt"></i> ማረጋገጫ ፎቶ ይምረጡ
                 </label>
                 <input type="file" id="receipt-screenshot" accept="image/*" style="display: none;">
-                <p id="file-chosen-text" style="font-size: 11px; color: #ffd700; margin-top: -5px; margin-bottom: 15px; text-align: center;"></p>
+                <div id="file-chosen-text" style="font-size: 11px; color: #ffd700; text-align: center; margin-top: -5px; margin-bottom: 10px;"></div>
 
-                <button class="submit-donation-btn" id="submit-donation">አበርክት (የመባ ዝርዝር መዝግብ)</button>
+                <button type="button" id="submit-donation" class="submit-donation-btn">አበርክት (የበረከት ተሳታፊ ሁን)</button>
             </div>
         </div>
     </div>
