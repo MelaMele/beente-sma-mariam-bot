@@ -61,7 +61,7 @@ const dailySpiritualData = {
         holiday: "ቅዱስ ይሁዳ ሐዋርያ",
         sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ከ72ቱ አርድእት አንዱ የሆነውና ጌታችንን በታማኝነት ያገለገለው ቅዱስ ይሁዳ ሐዋርያ የሰማዕትነት አክሊል የተቀበለበት ዕለት ነው።",
         gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ይሁዳ 1:1 | ንፍቅ፦ 1ኛ ዮሐ. 2:1 | ወንጌል፦ ሉቃ. 10:1",
-        quote: "“በፈተና ውስጥ ስትሆን ተስፋ አትቁረጥ፤ ይልቁንም ወደ እግዚአብሔር ጩኽ። እርሱ ቅርብ ነውና።” — ቅዱስ ኤፍሬም ሶርያዊ"
+        quote: "“በፈተና ውስጥ ስትሆን ተስፋ አትቁረጥ፤ ይልቁንም ወደ እግዚአብሔர் ጩኽ። እርሱ ቅርብ ነውና።” — ቅዱስ ኤፍሬም ሶርያዊ"
     },
     "10_26": {
         date: "ሰኔ 26 ቀን 2018 ዓ.ም",
@@ -70,7 +70,6 @@ const dailySpiritualData = {
         gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ 1ኛ ቆሮ. 4:9 | ንፍቅ፦ ያዕ. 5:13 | ወንጌል፦ ዮሐ. 10:11",
         quote: "“ጸሎት ማለት ከእግዚአብሔር ጋር መነጋገር ነው። በጸሎት ጊዜ ልብህ ከምድር ይልቅ ወደ ሰማይ ይቅረብ።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
     },
-    // 💡 የዛሬው ቀን (July 4, 2026 = ሰኔ 27 ቀን 2018 ዓ.ም)
     "10_27": {
         date: "ሰኔ 27 ቀን 2018 ዓ.ም",
         holiday: "የቅዱስ ቶማስ ሐዋርያ በዓል",
@@ -85,7 +84,6 @@ function updateDailyContent() {
     const ethDate = getEthiopianDate();
     const dataKey = `${ethDate.month}_${ethDate.day}`;
     
-    // ዳታው ከሌለ ወደ ሰኔ 24 ይመለሳል
     const todayData = dailySpiritualData[dataKey] ? dailySpiritualData[dataKey] : dailySpiritualData["10_24"];
 
     if (document.getElementById('ethiopian-date')) document.getElementById('ethiopian-date').innerText = todayData.date;
@@ -150,8 +148,7 @@ if (submitDonationBtn) {
     });
 }
 
-// 8. መዝሙር ማጫወቻ አሠራር
-// 8. መዝሙር ማጫወቻ አሠራር (የተስተካከለ - ከትዕዛዝ መደራረብ የጸዳ)
+// 8. መዝሙር ማጫወቻ አሠራር (ከመደራረብ የጸዳ)
 function updateMusicButtonState() {
     if (!mezmur || !musicToggleBtn) return;
     if (mezmur.paused) {
@@ -165,7 +162,6 @@ function updateMusicButtonState() {
     }
 }
 
-// መዝሙርን በደኅና ሁኔታ ለማስነሳት የምንጠቀምበት አንድ ወጥ ፈንክሽን
 function safePlayMezmur() {
     if (mezmur && mezmur.paused) {
         mezmur.play()
@@ -176,7 +172,7 @@ function safePlayMezmur() {
 
 if (musicToggleBtn && mezmur) {
     musicToggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // ወደ body እንዳይጋባ መክሊክን እዚህ ያቆመዋል
+        e.stopPropagation(); // ክሊኩ ወደ body እንዳይጋባ እዚህ ይቆማል
         if (mezmur.paused) {
             mezmur.play().then(updateMusicButtonState).catch(err => console.log("የኦዲዮ ስህተት:", err));
         } else {
@@ -189,7 +185,6 @@ if (musicToggleBtn && mezmur) {
 // 9. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
-        // መዝሙሩ ካልተከፈተ በደኅና ሁኔታ ለመክፈት ይሞክራል
         safePlayMezmur();
 
         points += 1;
@@ -210,7 +205,7 @@ if (mainTapBtn) {
     });
 }
 
-// 💡 ከላይ የነበረውን የ document.body event listener ሙሉ በሙሉ በዚህ ተክተነዋል
+// ስክሪኑ መጀመሪያ ሲነካ መዝሙሩን በአስተማማኝ ሁኔታ ለማስነሳት (ተደራራቢው ጠፍቷል)
 document.body.addEventListener('click', () => {
     safePlayMezmur();
 }, { once: true });
@@ -253,13 +248,6 @@ if (closeModal) {
         if (blessingModal) blessingModal.classList.remove('show');
     });
 }
-
-// ስክሪኑ የትም ቦታ ሲነካ መዝሙሩን የማስነሳት ማረጋገጫ
-document.body.addEventListener('click', () => {
-    if (mezmur && mezmur.paused) {
-        mezmur.play().then(updateMusicButtonState).catch(() => {});
-    }
-}, { once: true });
 
 function createFloatingPlusOne(x, y) {
     const el = document.createElement('div');
