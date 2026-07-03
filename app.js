@@ -86,7 +86,7 @@ function updateDailyContent() {
 
 updateDailyContent();
 
-// 5. ሁሉንም የዶክመንት ኤለመንቶች ከላይ ማገናኛ (ስህተቶቹ የተስተካከሉበት)
+// 5. ሁሉንም የዶክመንት ኤለመንቶች ከላይ ማገናኛ
 const blessingModal = document.getElementById('blessing-modal');
 const mainTapBtn = document.getElementById('main-tap-btn');
 const closeModal = document.getElementById('close-modal');
@@ -96,12 +96,11 @@ const submitDonationBtn = document.getElementById('submit-donation');
 const fileInput = document.getElementById('receipt-screenshot');
 const fileText = document.getElementById('file-chosen-text');
 
-// የክፍያ ቁልፎች (ከሁለቱም ቦታ የተገናኙ)
 const cbeBtn = document.getElementById('cbe-pay-btn');
 const teleBtn = document.getElementById('tele-pay-btn');
 const cbeModalBtn = document.getElementById('cbe-pay-btn-modal');
 const teleModalBtn = document.getElementById('tele-pay-btn-modal');
-const shareBtn = document.getElementById('share-invite-btn'); // የሪፈራል ቁልፍ መስተካከያ
+const shareBtn = document.getElementById('share-invite-btn');
 
 let points = parseInt(localStorage.getItem('user_points')) || 0;
 let referrals = parseInt(localStorage.getItem('user_referrals')) || 0;
@@ -168,9 +167,9 @@ if (musicToggleBtn && mezmur) {
 // 9. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
-        // 💡 ብሮውዘሩ አውቶፕሌይ ከከለከለ፣ ተጠቃሚው መጀመሪያ ቁልፉን ሲነካ መዝሙሩን ያስጀምረዋል
+        // 💡 ቴሌግራም አውቶፕሌይ ከከለከለ ተጠቃሚው መጀመሪያ ስክሪኑን ሲነካ መዝሙሩን በኃይል ያስጀምረዋል
         if (mezmur && mezmur.paused) {
-            mezmur.play().then(updateMusicButtonState).catch(err => console.log("አውቶፕሌይ ተከልክሏል፦", err));
+            mezmur.play().then(updateMusicButtonState).catch(() => {});
         }
 
         points += 1;
@@ -229,6 +228,13 @@ if (closeModal) {
         if (blessingModal) blessingModal.classList.remove('show');
     });
 }
+
+// 💡 ተጠቃሚው ከዋናው ቁልፍ ውጭም ገጹን የትም ቦታ ሲነካ የሙዚቃ ገደቡን ሰብሮ እንዲከፍት ማድረግ
+document.body.addEventListener('click', () => {
+    if (mezmur && mezmur.paused) {
+        mezmur.play().then(updateMusicButtonState).catch(() => {});
+    }
+}, { once: true }); // ይህ የሚሠራው ለአንዴ ብቻ ነው
 
 function createFloatingPlusOne(x, y) {
     const el = document.createElement('div');
