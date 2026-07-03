@@ -182,24 +182,29 @@ if (mainTapBtn) {
     });
 }
 
-// 10. የክፍያ አካውንቶችን ኮፒ ማድረጊያ ዘዴ
-if (cbeBtn) {
-    cbeBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText('1000379314396');
-        if (tg) tg.showPopup({title: 'የኢትዮጵያ ንግድ ባንክ', message: 'የአካውንት ቁጥር 1000379314396 ወደ ስልክዎ ኮፒ ተደርጓል!'});
-        else alert('CBE አካውንት ኮፒ ተደርጓል!');
-        if (blessingModal) blessingModal.classList.add('show');
-    });
-}
+// በዋናው ገጽ ላይ ላለው ቁልፍ
+const cbeBtn = document.getElementById('cbe-pay-btn');
+const teleBtn = document.getElementById('tele-pay-btn');
+// በፎርሙ (Modal) ውስጥ ላለው አዲሱ ቁልፍ
+const cbeModalBtn = document.getElementById('cbe-pay-btn-modal');
+const teleModalBtn = document.getElementById('tele-pay-btn-modal');
 
-if (teleBtn) {
-    teleBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText('0920628769');
-        if (tg) tg.showPopup({title: 'ቴሌብር', message: 'የአቅራቢው ስልክ ቁጥር 0920628769 ወደ ስልክዎ ኮፒ ተደርጓል!'});
-        else alert('የቴሌብር ስልክ ኮፒ ተደርጓል!');
-        if (blessingModal) blessingModal.classList.add('show');
-    });
-}
+const copyCBE = () => {
+    navigator.clipboard.writeText('1000379314396');
+    if (tg) tg.showPopup({title: 'የኢትዮጵያ ንግድ ባንክ', message: 'የአካውንት ቁጥር 1000379314396 ወደ ስልክዎ ኮፒ ተደርጓል!'});
+    else alert('CBE አካውንት ኮፒ ተደርጓል!');
+};
+
+const copyTele = () => {
+    navigator.clipboard.writeText('0920628769');
+    if (tg) tg.showPopup({title: 'ቴሌብር', message: 'የአቅራቢው ስልክ ቁጥር 0920628769 ወደ ስልክዎ ኮፒ ተደርጓል!'});
+    else alert('የቴሌብር ስልክ ኮፒ ተደርጓል!');
+};
+
+if (cbeBtn) cbeBtn.addEventListener('click', copyCBE);
+if (cbeModalBtn) cbeModalBtn.addEventListener('click', copyCBE);
+if (teleBtn) teleBtn.addEventListener('click', copyTele);
+if (teleModalBtn) teleModalBtn.addEventListener('click', copyTele);
 
 // 11. የሪፈራል ግብዣ ሊንክ መፍጠሪያ ቁልፍ
 if (shareBtn) {
