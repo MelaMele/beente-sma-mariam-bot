@@ -151,6 +151,7 @@ if (submitDonationBtn) {
 }
 
 // 8. መዝሙር ማጫወቻ አሠራር
+// 8. መዝሙር ማጫወቻ አሠራር (የተስተካከለ - ከትዕዛዝ መደራረብ የጸዳ)
 function updateMusicButtonState() {
     if (!mezmur || !musicToggleBtn) return;
     if (mezmur.paused) {
@@ -164,10 +165,20 @@ function updateMusicButtonState() {
     }
 }
 
+// መዝሙርን በደኅና ሁኔታ ለማስነሳት የምንጠቀምበት አንድ ወጥ ፈንክሽን
+function safePlayMezmur() {
+    if (mezmur && mezmur.paused) {
+        mezmur.play()
+            .then(updateMusicButtonState)
+            .catch(err => console.log("የኦዲዮ ማስነሳት ገደብ፦", err));
+    }
+}
+
 if (musicToggleBtn && mezmur) {
-    musicToggleBtn.addEventListener('click', () => {
+    musicToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // ወደ body እንዳይጋባ መክሊክን እዚህ ያቆመዋል
         if (mezmur.paused) {
-            mezmur.play().then(updateMusicButtonState).catch(err => alert("የኦዲዮ ስህተት፦ " + err));
+            mezmur.play().then(updateMusicButtonState).catch(err => console.log("የኦዲዮ ስህተት:", err));
         } else {
             mezmur.pause();
             updateMusicButtonState();
@@ -178,10 +189,8 @@ if (musicToggleBtn && mezmur) {
 // 9. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
-        // ተጠቃሚው መጀመሪያ ሲነካ መዝሙሩን በሃይል ያስጀምረዋል
-        if (mezmur && mezmur.paused) {
-            mezmur.play().then(updateMusicButtonState).catch(() => {});
-        }
+        // መዝሙሩ ካልተከፈተ በደኅና ሁኔታ ለመክፈት ይሞክራል
+        safePlayMezmur();
 
         points += 1;
         if (document.getElementById('user-points')) document.getElementById('user-points').innerText = points;
@@ -200,6 +209,11 @@ if (mainTapBtn) {
         if (blessingModal) blessingModal.classList.add('show');
     });
 }
+
+// 💡 ከላይ የነበረውን የ document.body event listener ሙሉ በሙሉ በዚህ ተክተነዋል
+document.body.addEventListener('click', () => {
+    safePlayMezmur();
+}, { once: true });
 
 // 10. የክፍያ አካውንቶችን ኮፒ ማድረጊያ ዘዴ
 const copyCBE = () => {
