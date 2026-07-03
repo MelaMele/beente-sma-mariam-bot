@@ -47,7 +47,7 @@ function getEthiopianDate() {
     return { month: ethMonth, day: ethDay, year: ethYear };
 }
 
-// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ (የዛሬው ሰኔ 27 ተጨምሯል)
+// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ
 const dailySpiritualData = {
     "10_24": {
         date: "ሰኔ 24 ቀን 2018 ዓ.ም",
@@ -61,7 +61,7 @@ const dailySpiritualData = {
         holiday: "ቅዱስ ይሁዳ ሐዋርያ",
         sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ከ72ቱ አርድእት አንዱ የሆነውና ጌታችንን በታማኝነት ያገለገለው ቅዱስ ይሁዳ ሐዋርያ የሰማዕትነት አክሊል የተቀበለበት ዕለት ነው።",
         gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ይሁዳ 1:1 | ንፍቅ፦ 1ኛ ዮሐ. 2:1 | ወንጌል፦ ሉቃ. 10:1",
-        quote: "“በፈተና ውስጥ ስትሆን ተስፋ አትቁረጥ፤ ይልቁንም ወደ እግዚአብሔர் ጩኽ። እርሱ ቅርብ ነውና።” — ቅዱስ ኤፍሬም ሶርያዊ"
+        quote: "“በፈተና ውስጥ ስትሆን ተስፋ አትቁረጥ፤ ይልቁንም ወደ እግዚአብሔር ጩኽ። እርሱ ቅርብ ነውና።” — ቅዱስ ኤፍሬም ሶርያዊ"
     },
     "10_26": {
         date: "ሰኔ 26 ቀን 2018 ዓ.ም",
@@ -148,7 +148,7 @@ if (submitDonationBtn) {
     });
 }
 
-// 8. መዝሙር ማጫወቻ አሠራር (ከመደራረብ የጸዳ)
+// 8. መዝሙር ማጫወቻ አሠራር (Play/Pause ራሳቸው የሚያደርጉበት ንጹሕ አሠራር)
 function updateMusicButtonState() {
     if (!mezmur || !musicToggleBtn) return;
     if (mezmur.paused) {
@@ -162,19 +162,12 @@ function updateMusicButtonState() {
     }
 }
 
-function safePlayMezmur() {
-    if (mezmur && mezmur.paused) {
-        mezmur.play()
-            .then(updateMusicButtonState)
-            .catch(err => console.log("የኦዲዮ ማስነሳት ገደብ፦", err));
-    }
-}
-
 if (musicToggleBtn && mezmur) {
-    musicToggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // ክሊኩ ወደ body እንዳይጋባ እዚህ ይቆማል
+    musicToggleBtn.addEventListener('click', () => {
         if (mezmur.paused) {
-            mezmur.play().then(updateMusicButtonState).catch(err => console.log("የኦዲዮ ስህተት:", err));
+            mezmur.play()
+                .then(updateMusicButtonState)
+                .catch(err => alert("መዝሙሩን ማጫወት አልተቻለም፦ " + err));
         } else {
             mezmur.pause();
             updateMusicButtonState();
@@ -185,8 +178,6 @@ if (musicToggleBtn && mezmur) {
 // 9. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
-        safePlayMezmur();
-
         points += 1;
         if (document.getElementById('user-points')) document.getElementById('user-points').innerText = points;
         localStorage.setItem('user_points', points);
@@ -204,11 +195,6 @@ if (mainTapBtn) {
         if (blessingModal) blessingModal.classList.add('show');
     });
 }
-
-// ስክሪኑ መጀመሪያ ሲነካ መዝሙሩን በአስተማማኝ ሁኔታ ለማስነሳት (ተደራራቢው ጠፍቷል)
-document.body.addEventListener('click', () => {
-    safePlayMezmur();
-}, { once: true });
 
 // 10. የክፍያ አካውንቶችን ኮፒ ማድረጊያ ዘዴ
 const copyCBE = () => {
