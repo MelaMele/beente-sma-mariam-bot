@@ -15,31 +15,27 @@ if (tg) {
     }
 }
 
-// 2. 💡 አዲሱ የፈረንጅ ቀንን ወደ ኢትዮጵያ ቀን መቀየሪያ ቀመር (Simple Gregorian to Ethiopian Converter)
+// 2. 💡 የፈረንጅ ቀንን ወደ ኢትዮጵያ ቀን መቀየሪያ ቀመር
 function getEthiopianDate() {
     const now = new Date();
     let gYear = now.getFullYear();
     let gMonth = now.getMonth() + 1;
     let gDay = now.getDate();
 
-    // ለአሁኑ (ለ2026 እ.ኤ.አ) የሰኔ ወርን ለማስላት የሚያገለግል ቀመር
-    // June 8 = ሰኔ 1 | June 25 = ሰኔ 18 | July 1 = ሰኔ 24 | July 2 = ሰኔ 25 | July 3 = ሰኔ 26
     let ethMonth = 10; // ሰኔ መደበኛ 10ኛ ወር ነው
     let ethDay = 1;
-    let ethYear = gYear - 8; // በተለምዶ 8 ዓመት ወደኋላ
+    let ethYear = gYear - 8;
 
-    // በጁላይ (July) ወር ውስጥ ከሆንን
     if (gMonth === 7) {
-        ethDay = gDay + 23; // July 1 = ሰኔ 24 (1 + 23)
+        ethDay = gDay + 23; // July 1 = ሰኔ 24
         if (ethDay > 30) {
             ethDay = ethDay - 30;
             ethMonth = 11; // ሐምሌ
         }
     } 
-    // በጁን (June) ወር ውስጥ ከሆንን
     else if (gMonth === 6) {
         if (gDay >= 8) {
-            ethDay = gDay - 7; // June 8 = ሰኔ 1 (8 - 7)
+            ethDay = gDay - 7; // June 8 = ሰኔ 1
         } else {
             ethMonth = 9; // ግንቦት
             ethDay = gDay + 24;
@@ -49,8 +45,7 @@ function getEthiopianDate() {
     return { month: ethMonth, day: ethDay, year: ethYear };
 }
 
-// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ (Array)
-// ማስታወሻ፦ እዚህ ላይ "10_24" ማለት 10ኛ ወር (ሰኔ) 24 ቀን ማለት ነው
+// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ
 const dailySpiritualData = {
     "10_24": {
         date: "ሰኔ 24 ቀን 2018 ዓ.ም",
@@ -80,7 +75,6 @@ function updateDailyContent() {
     const ethDate = getEthiopianDate();
     const dataKey = `${ethDate.month}_${ethDate.day}`;
     
-    // የዛሬው ቀን በዳታቤዛችን ውስጥ ካለ እሱን ያሳያል፣ ከሌለ ግን መደበኛውን የሰኔ 24 ያሳያል
     const todayData = dailySpiritualData[dataKey] ? dailySpiritualData[dataKey] : dailySpiritualData["10_24"];
 
     if (document.getElementById('ethiopian-date')) document.getElementById('ethiopian-date').innerText = todayData.date;
@@ -90,10 +84,9 @@ function updateDailyContent() {
     if (document.getElementById('scripture-quote')) document.getElementById('scripture-quote').innerText = todayData.quote;
 }
 
-// አፑ ሲከፈት ቀኑን ቀይር
 updateDailyContent();
 
-// 5. ሁሉንም የዶክመንት ኤለመንቶች ከላይ በቅደም ተከተል ማገናኛ
+// 5. ሁሉንም የዶክመንት ኤለመንቶች ከላይ ማገናኛ (ስህተቶቹ የተስተካከሉበት)
 const blessingModal = document.getElementById('blessing-modal');
 const mainTapBtn = document.getElementById('main-tap-btn');
 const closeModal = document.getElementById('close-modal');
@@ -103,9 +96,12 @@ const submitDonationBtn = document.getElementById('submit-donation');
 const fileInput = document.getElementById('receipt-screenshot');
 const fileText = document.getElementById('file-chosen-text');
 
+// የክፍያ ቁልፎች (ከሁለቱም ቦታ የተገናኙ)
 const cbeBtn = document.getElementById('cbe-pay-btn');
 const teleBtn = document.getElementById('tele-pay-btn');
-const shareBtn = document.getElementById('share-invite-btn');
+const cbeModalBtn = document.getElementById('cbe-pay-btn-modal');
+const teleModalBtn = document.getElementById('tele-pay-btn-modal');
+const shareBtn = document.getElementById('share-invite-btn'); // የሪፈራል ቁልፍ መስተካከያ
 
 let points = parseInt(localStorage.getItem('user_points')) || 0;
 let referrals = parseInt(localStorage.getItem('user_referrals')) || 0;
@@ -144,19 +140,27 @@ if (submitDonationBtn) {
     });
 }
 
-// 8. መዝሙር ማጫወቻ አሠራር
+// 8. መዝሙር ማጫወቻ አሠራር (ከአውቶፕሌይ ማረጋገጫ ጋር)
+function updateMusicButtonState() {
+    if (!mezmur || !musicToggleBtn) return;
+    if (mezmur.paused) {
+        musicToggleBtn.innerHTML = '<i class="fas fa-music"></i> መዝሙር ክፈት';
+        musicToggleBtn.style.background = 'rgba(255,255,255,0.1)';
+        musicToggleBtn.style.color = '#ffffff';
+    } else {
+        musicToggleBtn.innerHTML = '<i class="fas fa-pause"></i> መዝሙር አቁም';
+        musicToggleBtn.style.background = '#ffd700';
+        musicToggleBtn.style.color = '#4A0E17';
+    }
+}
+
 if (musicToggleBtn && mezmur) {
     musicToggleBtn.addEventListener('click', () => {
         if (mezmur.paused) {
-            mezmur.play().catch(err => console.log("የኦዲዮ ስህተት:", err));
-            musicToggleBtn.innerHTML = '<i class="fas fa-pause"></i> መዝሙር አቁም';
-            musicToggleBtn.style.background = '#ffd700';
-            musicToggleBtn.style.color = '#4A0E17';
+            mezmur.play().then(updateMusicButtonState).catch(err => console.log("የኦዲዮ ስህተት:", err));
         } else {
             mezmur.pause();
-            musicToggleBtn.innerHTML = '<i class="fas fa-music"></i> መዝሙር ክፈት';
-            musicToggleBtn.style.background = 'rgba(255,255,255,0.1)';
-            musicToggleBtn.style.color = '#ffffff';
+            updateMusicButtonState();
         }
     });
 }
@@ -164,6 +168,11 @@ if (musicToggleBtn && mezmur) {
 // 9. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
+        // የብሮውዘር አውቶፕሌይ ፖሊሲን ለማለፍ ተጠቃሚው መጀመሪያ ሲነካ መዝሙሩን ለማስጀመር መሞከር
+        if (mezmur && mezmur.paused) {
+            mezmur.play().then(updateMusicButtonState).catch(() => {});
+        }
+
         points += 1;
         if (document.getElementById('user-points')) document.getElementById('user-points').innerText = points;
         localStorage.setItem('user_points', points);
@@ -182,13 +191,7 @@ if (mainTapBtn) {
     });
 }
 
-// በዋናው ገጽ ላይ ላለው ቁልፍ
-const cbeBtn = document.getElementById('cbe-pay-btn');
-const teleBtn = document.getElementById('tele-pay-btn');
-// በፎርሙ (Modal) ውስጥ ላለው አዲሱ ቁልፍ
-const cbeModalBtn = document.getElementById('cbe-pay-btn-modal');
-const teleModalBtn = document.getElementById('tele-pay-btn-modal');
-
+// 10. የክፍያ አካውንቶችን ኮፒ ማድረጊያ ዘዴ
 const copyCBE = () => {
     navigator.clipboard.writeText('1000379314396');
     if (tg) tg.showPopup({title: 'የኢትዮጵያ ንግድ ባንክ', message: 'የአካውንት ቁጥር 1000379314396 ወደ ስልክዎ ኮፒ ተደርጓል!'});
