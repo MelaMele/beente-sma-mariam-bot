@@ -15,27 +15,29 @@ if (tg) {
     }
 }
 
-// 2. 💡 የፈረንጅ ቀንን ወደ ኢትዮጵያ ቀን መቀየሪያ ቀመር
+// 2. 💡 የተስተካከለ የኢትዮጵያ ቀን መቀየሪያ ቀመር (ሐምሌን ጨምሮ)
 function getEthiopianDate() {
     const now = new Date();
     let gYear = now.getFullYear();
     let gMonth = now.getMonth() + 1;
     let gDay = now.getDate();
 
-    let ethMonth = 10; // ሰኔ መደበኛ 10ኛ ወር ነው
+    let ethMonth = 10; // ሰኔ 
     let ethDay = 1;
     let ethYear = gYear - 8;
 
+    // በጁላይ (July) ወር ውስጥ ከሆንን
     if (gMonth === 7) {
-        ethDay = gDay + 23; // July 1 = ሰኔ 24
+        ethDay = gDay + 23; // July 1 = ሰኔ 24 | July 4 = ሰኔ 27
         if (ethDay > 30) {
             ethDay = ethDay - 30;
             ethMonth = 11; // ሐምሌ
         }
     } 
+    // በጁን (June) ወር ውስጥ ከሆንን
     else if (gMonth === 6) {
         if (gDay >= 8) {
-            ethDay = gDay - 7; // June 8 = ሰኔ 1
+            ethDay = gDay - 7;
         } else {
             ethMonth = 9; // ግንቦት
             ethDay = gDay + 24;
@@ -45,7 +47,7 @@ function getEthiopianDate() {
     return { month: ethMonth, day: ethDay, year: ethYear };
 }
 
-// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ
+// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ (የዛሬው ሰኔ 27 ተጨምሯል)
 const dailySpiritualData = {
     "10_24": {
         date: "ሰኔ 24 ቀን 2018 ዓ.ም",
@@ -67,6 +69,14 @@ const dailySpiritualData = {
         sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> የታላቁ የንሲቢን ኤጲስቆጶስ ቅዱስ ያዕቆብ መታሰቢያ ነው። በጸሎቱ ድንቆችን ያደረገ እና የኒቅያ ጉባኤ ተካፋይ የነበረ አባት ነው።",
         gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ 1ኛ ቆሮ. 4:9 | ንፍቅ፦ ያዕ. 5:13 | ወንጌል፦ ዮሐ. 10:11",
         quote: "“ጸሎት ማለት ከእግዚአብሔር ጋር መነጋገር ነው። በጸሎት ጊዜ ልብህ ከምድር ይልቅ ወደ ሰማይ ይቅረብ።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
+    },
+    // 💡 የዛሬው ቀን (July 4, 2026 = ሰኔ 27 ቀን 2018 ዓ.ም)
+    "10_27": {
+        date: "ሰኔ 27 ቀን 2018 ዓ.ም",
+        holiday: "የቅዱስ ቶማስ ሐዋርያ በዓል",
+        sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት የጌታችንን ትንሳኤ በጣቶቹ ዳስሶ ያመነው ታላቁ ሐዋርያ ቅዱስ ቶማስ በህንድ ሀገር ወንጌልን ሰብኮ በተአምራቱ ብዙዎችን ያጠመቀበት መታሰቢያ ነው።",
+        gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ 1ኛ ቆሮ. 12:12 | ንፍቅ፦ 1ኛ ጴጥ. 1:13 | ወንጌል፦ ዮሐ. 20:24",
+        quote: "“ሳያዩ የሚያምኑ ብፁዓን ናቸው።” — ጌታችን ኢየሱስ ክርስቶስ"
     }
 };
 
@@ -75,6 +85,7 @@ function updateDailyContent() {
     const ethDate = getEthiopianDate();
     const dataKey = `${ethDate.month}_${ethDate.day}`;
     
+    // ዳታው ከሌለ ወደ ሰኔ 24 ይመለሳል
     const todayData = dailySpiritualData[dataKey] ? dailySpiritualData[dataKey] : dailySpiritualData["10_24"];
 
     if (document.getElementById('ethiopian-date')) document.getElementById('ethiopian-date').innerText = todayData.date;
@@ -139,7 +150,7 @@ if (submitDonationBtn) {
     });
 }
 
-// 8. መዝሙር ማጫወቻ አሠራር (የተስተካከለ)
+// 8. መዝሙር ማጫወቻ አሠራር
 function updateMusicButtonState() {
     if (!mezmur || !musicToggleBtn) return;
     if (mezmur.paused) {
@@ -156,7 +167,7 @@ function updateMusicButtonState() {
 if (musicToggleBtn && mezmur) {
     musicToggleBtn.addEventListener('click', () => {
         if (mezmur.paused) {
-            mezmur.play().then(updateMusicButtonState).catch(err => console.log("የኦዲዮ ስህተት:", err));
+            mezmur.play().then(updateMusicButtonState).catch(err => alert("የኦዲዮ ስህተት፦ " + err));
         } else {
             mezmur.pause();
             updateMusicButtonState();
@@ -167,7 +178,7 @@ if (musicToggleBtn && mezmur) {
 // 9. Touch/Tap አሠራር ለዋናው ቁልፍ (Tap-to-Bless)
 if (mainTapBtn) {
     mainTapBtn.addEventListener('click', (e) => {
-        // 💡 ቴሌግራም አውቶፕሌይ ከከለከለ ተጠቃሚው መጀመሪያ ስክሪኑን ሲነካ መዝሙሩን በኃይል ያስጀምረዋል
+        // ተጠቃሚው መጀመሪያ ሲነካ መዝሙሩን በሃይል ያስጀምረዋል
         if (mezmur && mezmur.paused) {
             mezmur.play().then(updateMusicButtonState).catch(() => {});
         }
@@ -229,12 +240,12 @@ if (closeModal) {
     });
 }
 
-// 💡 ተጠቃሚው ከዋናው ቁልፍ ውጭም ገጹን የትም ቦታ ሲነካ የሙዚቃ ገደቡን ሰብሮ እንዲከፍት ማድረግ
+// ስክሪኑ የትም ቦታ ሲነካ መዝሙሩን የማስነሳት ማረጋገጫ
 document.body.addEventListener('click', () => {
     if (mezmur && mezmur.paused) {
         mezmur.play().then(updateMusicButtonState).catch(() => {});
     }
-}, { once: true }); // ይህ የሚሠራው ለአንዴ ብቻ ነው
+}, { once: true });
 
 function createFloatingPlusOne(x, y) {
     const el = document.createElement('div');
