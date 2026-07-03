@@ -4,28 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>በእንተ ስማ ለማርያም በጎ አድራጎት</title>
+    <!-- FontAwesome ለሚያማምሩ አይኮኖች -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- ዋናው የስታይል ፋይል -->
     <link rel="stylesheet" href="style.css">
+    <!-- የቴሌግราม ሚኒ አፕ ስክሪፕት -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- የ Supabase ዴታቤዝ ስክሪፕት -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <audio id="bg-mezmur" src="assets/mezmur.mp3" loop></audio>
+    <!-- ጀርባ የሚጫወት መዝሙር (በአዲሱ የፋይል ስም የተስተካከለ) -->
+    <audio id="bg-mezmur" src="assets/mary.mp3" loop></audio>
 
     <div class="app-container">
         
+        <!-- የመዝሙር መቆጣጠሪያ ቁልፍ -->
         <div class="audio-control-zone">
             <button id="music-toggle-btn" class="music-btn">
                 <i class="fas fa-music"></i> መዝሙር ክፈት
             </button>
         </div>
 
+        <!-- 3D የላይኛው አርማ (Header) - በትክክለኛው ስም ተስተካክሏል -->
         <div class="header-zone">
             <h1 class="logo-3d">ቤተሳይዳ</h1>
-            <span class="sub-logo">የሕጻናትና አረጋውያን መርጃ መንፈሳዊ ማኅበር</span>
+            <span class="sub-logo">መንፈሳዊ በጎ አድራጎት</span>
         </div>
 
+        <!-- የተጠቃሚ መገለጫ (User Profile) -->
         <div class="user-profile">
             <div class="avatar">✨</div>
             <div class="user-info">
@@ -36,14 +44,17 @@
             </div>
         </div>
 
+        <!-- የዕለቱ በዓል ፣ ስንክሳር እና ግጻዌ ካርድ -->
         <div class="holiday-card">
             <h2 id="ethiopian-date">ሰኔ 24 ቀን 2018 ዓ.ም</h2>
             <h3 id="holiday-title">የዕለቱ መታሰቢያ በዓል</h3>
             
+            <!-- ስዕለ አድህኖ ሳጥን (በአዲሱ የፎቶ ስም የተስተካከለ) -->
             <div class="image-container">
-                <img src="assets/saint-image.jpg" alt="ስዕለ አድህኖ">
+                <img src="assets/mary.jpg" alt="ስዕለ አድህኖ">
             </div>
 
+            <!-- ዕለታዊ መረጃዎች -->
             <div class="church-info-box">
                 <p id="sinksar-text">📖 ዕለታዊ ስንክሳር በመጫን ላይ...</p>
                 <p id="gitsawe-text">📜 የዕለቱ ግጻዌ በመጫን ላይ...</p>
@@ -54,6 +65,7 @@
             </div>
         </div>
 
+        <!-- "በእንተ ስማ ለማርያም" ዋና ንክኪ ቁልፍ (Tap-to-Bless) -->
         <div class="main-button-container">
             <button id="main-tap-btn" class="blessing-circle-btn">
                 <span class="btn-text">በእንተ ስማ<br>ለማርያም</span>
@@ -61,6 +73,7 @@
             </button>
         </div>
 
+        <!-- የነጥብ እና የሪፈራል ስታቲስቲክስ ሳጥኖች -->
         <div class="stats-grid">
             <div class="stat-box">
                 <span class="stat-title">የተሰበሰበ በረከት</span>
@@ -72,6 +85,7 @@
             </div>
         </div>
 
+        <!-- ምዕመናንን መጋበዣ ቁልፍ -->
         <div class="donation-drawer">
             <button id="share-invite-btn" class="submit-donation-btn" style="width: 100%; margin: 0;">
                 <i class="fas fa-user-plus"></i> ምዕመናንን ይጋብዙ (በረከት ያትርፉ)
@@ -80,6 +94,7 @@
 
     </div>
 
+    <!-- የበረከት ማበርከቻ ፎርም (Modal Overlay) -->
     <div id="blessing-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -117,6 +132,7 @@
         </div>
     </div>
 
+    <!-- ዋናው የአፕሊኬሽኑ ጃቫስክሪፕት ፋይል -->
     <script src="app.js"></script>
 </body>
 </html>
