@@ -5,7 +5,9 @@
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "style.css", "use": "@vercel/static" },
     { "src": "app.js", "use": "@vercel/static" },
-    { "src": "mary.jpg", "use": "@vercel/static" }
+    { "src": "mary.jpg", "use": "@vercel/static" },
+    { "src": "mary.mp3", "use": "@vercel/static" },
+    { "src": "calendar_data.json", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api", "dest": "api/index.py" },
