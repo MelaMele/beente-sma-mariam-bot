@@ -5,10 +5,12 @@ from flask import Flask, request, jsonify
 import requests
 
 app = Flask(__name__)
-handler = app # 👈 ቪርሴል ሰርቨሩን በቀላሉ እንዲያገኘው ይህንን ጨምረናል!
+handler = app 
 
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
+# ማሳሰቢያ፦ መልእክቱ በየ 30 ደቂቃው እንዲሄድበት የሚፈልጉትን የቴሌግራም ግሩፕ ወይም ቻናል ID በ Environment Variable (NOTIFICATION_CHAT_ID) ላይ ይጨምሩት።
+CHAT_ID = os.environ.get("NOTIFICATION_CHAT_ID")
 
 CHURCH_CALENDAR = {
     21: {
@@ -42,6 +44,18 @@ GENERAL_ADVICE = [
     {"msg": "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።”", "author": "ቅዱስ ዮሐንስ አፈወርቅ"},
     {"msg": "“እግዚአብሔር በደስታ የሚሰጠውን ይወዳልና።”", "author": "2ኛ ቆሮንቶስ 9:7"},
     {"msg": "“ለደሃ የሚሰጥ ለእግዚአብሔር ያበድራል፤ ማንም ልቡን ክፍት አድርጎ ለሌላው ሊራራ ይገባል።”", "author": "መጽሐፈ ምሳሌ"}
+]
+
+# 🔔 አዲስ ለተጠቃሚዎች ማነቂያ የሚሆኑ የቤተክርስቲያን ሥርዓትና የአበው ትምህርቶች ስብስብ
+SPIRITUAL_TEACHINGS = [
+    "“ጸሎት ማለት ከእግዚአብሔር ጋር መነጋገር ነው። እስትንፋስ ለሥጋ እንደሚያስፈልገው ሁሉ፣ ጸሎትም ለነፍስ እንዲሁ ያስፈልጋታል።” — ቅዱስ ዮሐንስ አፈወርቅ",
+    "“በቤተክርስቲያን ሥርዓት መሠረት፣ ንስሐ የሌለው ሕይወት ፍሬ የሌለው ዛፍ ነው። ሁልጊዜ ከንስሐ አባትዎ ጋር በመገናኘት ነፍስዎን ያነጹ።” — የአበው ትምህርት",
+    "“ምጽዋት ስታደርግ ቀኝህ የምታደርገውን ግራህ አያውቀው የተባለው ለትዕቢት እንዳይሆንብህ ነው። በፍቅርና በትሕትና የተደረገ ስጦታ በእግዚአብሔር ዘንድ ተወዳጅ ነው።” — ቅዱስ ባስልዮስ ዘቂሳሪያ",
+    "“ቅዱስ ቁርባን የሕይወት ምግብ ነው። ራሳችንን በንስሐ አዘጋጅተን ቅዱስ ሥጋውንና ክቡር ደሙን መቀበል ዘላለማዊ ሕይወትን መውረስ ነው።” — ሥርዓተ ቤተክርስቲያን",
+    "“ጠላትህን ውደድ የተባልከው እርሱ እንዲለወጥና አንተም የክርስቶስ እውነተኛ ተከታይ እንድትሆን ነው። በቀል የክርስቲያን ግብር አይደለም።” — ቅዱስ ኤፍሬም ሶርያዊ",
+    "“ሳያዩ የሚያምኑ ብፁዓን ናቸው። እምነታችን በቅዱሳት መጻሕፍትና በአበው ትምህርት ላይ የጸና ሊሆን ይገባል።” — ቅዱስ ቶማስ ሐዋርያ (መታሰቢያ)",
+    "“ጾም ማለት ምግብ ከመከልከል አልፎ ዓይንን ከማየት፣ አንደበትን ከመናገር፣ ልብን ክፉ ከማሰብ መጠበቅ ነው። እውነተኛ ጾም ከፍቅር ጋር ይሠራል码።” — ቅዱስ ያዕቆብ ዘዕንጉግ",
+    "“ክርስቲያን መሆን ማለት በቃል ብቻ ሳይሆን በኑሮ ክርስቶስን መምሰል ማለት ነው። ምግባር የሌለው እምነት የሞተ ነው።” — ቅዱስ አትናቴዎስ ሐዋርያዊ"
 ]
 
 @app.route('/api', methods=['POST'])
@@ -88,9 +102,34 @@ def get_daily_blessing():
         "quote": f"{advice['msg']} — {advice['author']}"
     })
 
+# 🔔 በየ 30 ደቂቃው መልእክት ለመላክ የሚጠራው አዲሱ ገጽ (Endpoint)
+@app.route('/api/cron-reminder', methods=['GET'])
+def cron_reminder():
+    if not CHAT_ID:
+        return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
+        
+    # ከትምህርቶቹ ውስጥ አንዱን በዘፈቀደ መምረጥ
+    selected_teaching = random.choice(SPIRITUAL_TEACHINGS)
+    
+    formatted_msg = (
+        f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n\n"
+        f"{selected_teaching}\n\n"
+        f"🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
+    )
+    
+    success = send_message(CHAT_ID, formatted_msg)
+    if success:
+        return jsonify({"status": "success", "message": "ማነቂያ መልእክት ተልኳል"}), 200
+    else:
+        return jsonify({"status": "error", "message": "መልእክት መላክ አልተቻለም"}), 500
+
 def send_message(chat_id, text, reply_markup=None):
     url = f"{TELEGRAM_API}/sendMessage"
     payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
     if reply_markup:
         payload["reply_markup"] = reply_markup
-    requests.post(url, json=payload)
+    try:
+        response = requests.post(url, json=payload)
+        return response.status_code == 200
+    except:
+        return False
