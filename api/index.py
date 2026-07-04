@@ -138,7 +138,7 @@ def cron_reminder():
         "inline_keyboard": [[
             {
                 "text": "❤️ ማንም ሳይጸጸት በደስታ ይስጥ (ወደ ቦቱ ግባ)",
-                "url": f"https://t.me/{BOT_USERNAME}?start=true"
+                "url": f"https://t.me/@BeenteSmaMariam_bot?start=true"
             }
         ]]
     }
