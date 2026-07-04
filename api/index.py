@@ -132,13 +132,15 @@ def cron_reminder():
         f"🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
     )
     
-    BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "beente_sma_mariam_bot")
+    # ዩዘርኔሙን እዚህ ላይ ያለ @ ምልክት ያስቀምጡት
+    BOT_USERNAME = "BeenteSmaMariam_bot" 
     
     reply_markup = {
         "inline_keyboard": [[
             {
                 "text": "❤️ ማንም ሳይጸጸት በደስታ ይስጥ (ወደ ቦቱ ግባ)",
-                "url": f"https://t.me/@BeenteSmaMariam_bot?start=true"
+                # 🔗 ትክክለኛው የቴሌግራም ሊንክ አጻጻፍ (ያለ @ ምልክት)
+                "url": f"https://t.me/{BOT_USERNAME}?start=true"
             }
         ]]
     }
@@ -148,7 +150,6 @@ def cron_reminder():
         return jsonify({"status": "success", "message": "ማነቂያ መልእክት ከነቁልፉ ተልኳል"}), 200
     else:
         return jsonify({"status": "error", "message": "መልእክት መላክ አልተቻለም"}), 500
-
 def send_message(chat_id, text, reply_markup=None):
     url = f"{TELEGRAM_API}/sendMessage"
     payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
