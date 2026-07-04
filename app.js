@@ -148,7 +148,7 @@ if (submitDonationBtn) {
     });
 }
 
-// 8. መዝሙር ማጫወቻ አሠራር (Play/Pause ራሳቸው የሚያደርጉበት ንጹሕ አሠራር)
+// 8. መዝሙር ማጫወቻ አሠራር (የስህተት መልእክት ፖፕ-አፕ እንዳያሳይ የተከለከለ)
 function updateMusicButtonState() {
     if (!mezmur || !musicToggleBtn) return;
     if (mezmur.paused) {
@@ -165,9 +165,12 @@ function updateMusicButtonState() {
 if (musicToggleBtn && mezmur) {
     musicToggleBtn.addEventListener('click', () => {
         if (mezmur.paused) {
+            // .catch(() => {}) ማድረጋችን ማንኛውንም የብሮውዘር ስህተት በምስጢር ይውጠዋል፤ ፖፕ-አፕ አያሳይም
             mezmur.play()
                 .then(updateMusicButtonState)
-                .catch(err => alert("መዝሙሩን ማጫወት አልተቻለም፦ " + err));
+                .catch(() => { 
+                    console.log("የኦዲዮ ማስነሳት ቆይቷል"); 
+                });
         } else {
             mezmur.pause();
             updateMusicButtonState();
