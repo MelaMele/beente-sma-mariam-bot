@@ -9,7 +9,6 @@ handler = app
 
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
-# ማሳሰቢያ፦ መልእክቱ በየ 30 ደቂቃው እንዲሄድበት የሚፈልጉትን የቴሌግራም ግሩፕ ወይም ቻናል ID በ Environment Variable (NOTIFICATION_CHAT_ID) ላይ ይጨምሩት።
 CHAT_ID = os.environ.get("NOTIFICATION_CHAT_ID")
 
 CHURCH_CALENDAR = {
@@ -46,14 +45,13 @@ GENERAL_ADVICE = [
     {"msg": "“ለደሃ የሚሰጥ ለእግዚአብሔር ያበድራል፤ ማንም ልቡን ክፍት አድርጎ ለሌላው ሊራራ ይገባል።”", "author": "መጽሐፈ ምሳሌ"}
 ]
 
-# 🔔 አዲስ ለተጠቃሚዎች ማነቂያ የሚሆኑ የቤተክርስቲያን ሥርዓትና የአበው ትምህርቶች ስብስብ
 SPIRITUAL_TEACHINGS = [
     "“ጸሎት ማለት ከእግዚአብሔር ጋር መነጋገር ነው። እስትንፋስ ለሥጋ እንደሚያስፈልገው ሁሉ፣ ጸሎትም ለነፍስ እንዲሁ ያስፈልጋታል።” — ቅዱስ ዮሐንስ አፈወርቅ",
     "“በቤተክርስቲያን ሥርዓት መሠረት፣ ንስሐ የሌለው ሕይወት ፍሬ የሌለው ዛፍ ነው። ሁልጊዜ ከንስሐ አባትዎ ጋር በመገናኘት ነፍስዎን ያነጹ።” — የአበው ትምህርት",
     "“ምጽዋት ስታደርግ ቀኝህ የምታደርገውን ግራህ አያውቀው የተባለው ለትዕቢት እንዳይሆንብህ ነው። በፍቅርና በትሕትና የተደረገ ስጦታ በእግዚአብሔር ዘንድ ተወዳጅ ነው።” — ቅዱስ ባስልዮስ ዘቂሳሪያ",
     "“ቅዱስ ቁርባን የሕይወት ምግብ ነው። ራሳችንን በንስሐ አዘጋጅተን ቅዱስ ሥጋውንና ክቡር ደሙን መቀበል ዘላለማዊ ሕይወትን መውረስ ነው።” — ሥርዓተ ቤተክርስቲያን",
     "“ጠላትህን ውደድ የተባልከው እርሱ እንዲለወጥና አንተም የክርስቶስ እውነተኛ ተከታይ እንድትሆን ነው። በቀል የክርስቲያን ግብር አይደለም።” — ቅዱስ ኤፍሬም ሶርያዊ",
-    "“ሳያዩ የሚያምኑ ብፁዓን ናቸው። እምነታችን በቅዱሳት መጻሕፍትና በአበው ትምህርት ላይ የጸና ሊሆን ይገባል።” — ቅዱስ ቶማስ ሐዋርያ (መታሰቢያ)",
+    "“ can't አማኝ ሳይሆን አይቶ ማመን የቶማስ ድንካሬ እንጂ ድክመት አልነበረም። እምነታችን በቅዱሳት መጻሕፍት ላይ የጸና ይሁን።” — ቅዱስ ቶማስ ሐዋርያ",
     "“ጾም ማለት ምግብ ከመከልከል አልፎ ዓይንን ከማየት፣ አንደበትን ከመናገር፣ ልብን ክፉ ከማሰብ መጠበቅ ነው። እውነተኛ ጾም ከፍቅር ጋር ይሠራል码።” — ቅዱስ ያዕቆብ ዘዕንጉግ",
     "“ክርስቲያን መሆን ማለት በቃል ብቻ ሳይሆን በኑሮ ክርስቶስን መምሰል ማለት ነው። ምግባር የሌለው እምነት የሞተ ነው።” — ቅዱስ አትናቴዎስ ሐዋርያዊ"
 ]
@@ -68,6 +66,7 @@ def webhook():
     chat_id = message["chat"]["id"]
     text = message.get("text", "")
 
+    # 1. ተጠቃሚው መጀመሪያ ሲመጣ ወይም /start ሲል
     if text.startswith("/start"):
         welcome_text = (
             f"እንኳን ወደ <b>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት</b> መድረክ በደህና መጡ! 🎉\n\n"
@@ -83,6 +82,23 @@ def webhook():
             ]]
         }
         send_message(chat_id, welcome_text, reply_markup)
+        
+    # 2. ተጠቃሚው ሌላ ማናቸውንም ጽሑፍ ወይም ሊንክ ሲልክ ዝም እንዳይል ማነቂያ ቁልፍ መመለስ
+    else:
+        reminder_text = (
+            f"የተወደዱ ምዕመን! 🕊\n\n"
+            f"የዕለቱን ስንክሳር ለማንበብ፣ የበረከት ነጥቦችን ለመሰብሰብ እና የበጎ አድራጎት ተሳትፎ ለማድረግ እባክዎ ከታች ያለውን ቁልፍ ተጭነው ወደ መተግበሪያችን ይግቡ፦"
+        )
+        reply_markup = {
+            "inline_keyboard": [[
+                {
+                    "text": "❤️ ወደ ቤተሳይዳ መድረክ ግባ",
+                    "web_app": {"url": f"https://{request.host}/"}
+                }
+            ]]
+        }
+        send_message(chat_id, reminder_text, reply_markup)
+        
     return "OK", 200
 
 @app.route('/api/daily-blessing', methods=['GET'])
@@ -102,13 +118,12 @@ def get_daily_blessing():
         "quote": f"{advice['msg']} — {advice['author']}"
     })
 
-# 🔔 በየ 30 ደቂቃው መልእክት ለመላክ የሚጠራው አዲሱ ገጽ (Endpoint)
+# 🔔 በየ 30 ደቂቃው መልእክት ከማነቂያ ቁልፍ (Button) ጋር ወደ ቻናል የሚልክ መስመር
 @app.route('/api/cron-reminder', methods=['GET'])
 def cron_reminder():
     if not CHAT_ID:
         return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
         
-    # ከትምህርቶቹ ውስጥ አንዱን በዘፈቀደ መምረጥ
     selected_teaching = random.choice(SPIRITUAL_TEACHINGS)
     
     formatted_msg = (
@@ -117,9 +132,20 @@ def cron_reminder():
         f"🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
     )
     
-    success = send_message(CHAT_ID, formatted_msg)
+    BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "beente_sma_mariam_bot")
+    
+    reply_markup = {
+        "inline_keyboard": [[
+            {
+                "text": "❤️ ማንም ሳይጸጸት በደስታ ይስጥ (ወደ ቦቱ ግባ)",
+                "url": f"https://t.me/{BOT_USERNAME}?start=true"
+            }
+        ]]
+    }
+    
+    success = send_message(CHAT_ID, formatted_msg, reply_markup)
     if success:
-        return jsonify({"status": "success", "message": "ማነቂያ መልእክት ተልኳል"}), 200
+        return jsonify({"status": "success", "message": "ማነቂያ መልእክት ከነቁልፉ ተልኳል"}), 200
     else:
         return jsonify({"status": "error", "message": "መልእክት መላክ አልተቻለም"}), 500
 
