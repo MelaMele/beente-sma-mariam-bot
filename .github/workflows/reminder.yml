@@ -1,0 +1,15 @@
+name: Send Spiritual Reminder Every 30 Minutes
+
+on:
+  schedule:
+    # በየ 30 ደቂቃው ይነሳል (Cron Job)
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # እርስዎ ራስዎ በእጅ ቴስት ማድረግ እንዲችሉ
+
+jobs:
+  trigger_reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Betesayda Cron Endpoint
+        run: |
+          curl -X GET "https://የእርስዎ-የቨርሴል-ሊንክ.vercel.app/api/cron-reminder"
