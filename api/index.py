@@ -12,10 +12,12 @@ TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
 CHAT_ID = os.environ.get("NOTIFICATION_CHAT_ID")
 
-# 🔗 የቦቱ ሪፈራል ሊንክ ወደ ቻናሉ እንዲሆን የቻናልዎን ሊንክ እዚህ ያስገቡ (ያለ @ ምልክት)
-# ለምሳሌ፦ "የቻናል_ዩዘርኔም" (በ Environment Variable መልክ መተካትም ይቻላል)
+# 📢 የቻናልዎን ትክክለኛ ዩዘርኔም እዚህ ያስገቡ (ያለ @ ምልክት)
 CHANNEL_USERNAME = os.environ.get("TELEGRAM_CHANNEL_USERNAME", "BeenteSmaMariam_Channel") 
 CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
+
+# 🤖 የቦትዎ ትክክለኛ ዩዘርኔም (ያለ @ ምልክት)
+BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "BeenteSmaMariam_bot")
 
 # 📅 የሰርቨሩን ሰዓት ወደ ትክክለኛው የኢትዮጵያ ቀን መቀየሪያ (ዛሬ ጁላይ 5 = ሰኔ 28)
 def get_ethiopian_date():
@@ -36,7 +38,6 @@ def get_ethiopian_date():
 
 # 📁 በ Repository ውስጥ ያለውን calendar_data.json ፋይል በቀጥታ የሚያነብ ፋንክሽን
 def load_calendar_data():
-    # በ Vercel ላይ ፋይሉ የሚቀመጥበትን ትክክለኛ መንገድ መፈለግ
     possible_paths = [
         os.path.join(os.path.dirname(__file__), '..', 'calendar_data.json'),
         'calendar_data.json'
@@ -67,7 +68,7 @@ def webhook():
     chat_id = message["chat"]["id"]
     text = message.get("text", "")
 
-    # ተጠቃሚው ቦቱ ላይ /start ሲል ቀጥታ ወደ ቻናሉ የሚወስድ ሊንክ እንሰጠዋለን (ሪፈራል ስልት)
+    # ተጠቃሚው ቦቱ ላይ /start ሲል መጀመሪያ ወደ ቻናሉ እንዲሄድ ማድረግ (ሪፈራል ስልት)
     if text.startswith("/start"):
         welcome_text = (
             f"እንኳን ወደ <b>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት</b> መድረክ በደህና መጡ! 🎉\n\n"
@@ -88,7 +89,6 @@ def get_daily_blessing():
     calendar_data = load_calendar_data()
     key = f"{eth_month}-{eth_day}"
     
-    # ከ calendar_data.json ላይ መረጃውን መፈለግ
     day_info = calendar_data.get(key, calendar_data.get("10-28", {
         "holiday": "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል",
         "sinksar": "በዚህች ዕለት ጌታችን መድኃኒታችን ኢየሱስ ክርስቶስ ለአለም የገባውን የምሕረት ቃልኪዳን ያሰበበት ዕለት ነው።",
@@ -119,7 +119,6 @@ def cron_reminder():
     if not day_info:
         return jsonify({"status": "error", "message": "የዕለቱ ዳታ በ JSON ውስጥ አልተገኘም"}), 404
 
-    # 🔄 በየ 30 ደቂቃው ይዘቱ እንዲቀያየር በዘፈቀደ አንዱን መምረጥ
     content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "advice"])
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ ሰኔ {eth_day} ቀን</b>\n\n"
     
@@ -141,11 +140,11 @@ def cron_reminder():
         
     formatted_msg = base_header + body + "\n\n🕊️ <i>በእንተ ስማ ለማርያም እያልን የተራቡትን የምንመግብበት የቤተሳይዳ በጎ አድራጎት አባል ይሁኑ።</i>"
     
-    # 🔗 ጎልቶ የሚታይ የመግቢያ ቁልፍ (Button) -> ወደ ቻናሉ መመለሻ ሊንክ
+    # 🔗 ➔ የተስተካከለ የቦት መግቢያ ሊንክ (t.me ይላል፣ ወደ ቦቱ ይወስዳል)
     reply_markup = {
         "inline_keyboard": [[{
-            "text": "💎 ማንም ሳይጸጸት በደስታ ይስጥ ➔ [ ወደ ቻናሉ ግባ ] 💎",
-            "url": CHANNEL_URL
+            "text": "💎 ማንም ሳይጸጸት በደስታ ይስጥ ➔ [ ወደ ቦቱ ግባ ] 💎",
+            "url": f"https://t.me/{BOT_USERNAME}?start=true"
         }]]
     }
     
