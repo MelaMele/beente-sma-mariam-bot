@@ -178,9 +178,17 @@ def send_message(chat_id, text, reply_markup=None):
     try: return requests.post(url, json=payload).status_code == 200
     except: return False
 
-def send_audio(chat_id, audio_url, caption, reply_markup=None):
-    url = f"{TELEGRAM_API}/sendAudio"
-    payload = {"chat_id": chat_id, "audio": audio_url, "caption": caption, "parse_mode": "HTML"}
-    if reply_markup: payload["reply_markup"] = reply_markup
-    try: return requests.post(url, json=payload).status_code == 200
-    except: return False
+audio_url = f"https://{request.host}/mary.mp3"
+    
+    # መጀመሪያ ኦዲዮውን ለመላክ ይሞክራል
+    success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
+    
+    if success:
+        return jsonify({"status": "success", "message": f"{key} ቀን {content_type} ይዘት ከነመዝሙሩ ወደ ቻናል ተልኳል"}), 200
+    else:
+        # ኦዲዮው እምቢ ካለው ወዲያውኑ በጽሑፍ ብቻ ይልካል
+        fallback_success = send_message(CHAT_ID, formatted_msg, reply_markup)
+        if fallback_success:
+            return jsonify({"status": "fallback", "message": "ኦዲዮው አልሰራም ግን በጽሑፍ ብቻ ወደ ቻናል ተልኳል"}), 200
+        else:
+            return jsonify({"status": "error", "message": "ወደ ቻናሉ መላክ አልተቻለም። እባክህ ቦቱ Admin መሆኑን እና CHAT_ID ትክክል መሆኑን አረጋግጥ"}), 500
