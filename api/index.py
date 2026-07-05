@@ -30,7 +30,7 @@ def get_ethiopian_date():
     
     if utc_now.month == 7: # ጁላይ
         eth_month = 10 # ሰኔ
-        eth_day = utc_now.day + 24 # ጁላይ 1 = ሰኔ 24 ስለሆነ (1 + 23 = 24)
+        eth_day = utc_now.day + 24 # ጁላይ 6 + 24 = 30 (ሰኔ 30 ለማድረግ የተስተካከለ)
         if eth_day > 30:
             eth_month = 11 # ሐምሌ
             eth_day = eth_day - 30
@@ -124,7 +124,6 @@ def cron_reminder():
     day_info = calendar_data.get(key, calendar_data.get("10-28"))
     
     if not day_info:
-        # የዳታቤዝ ፋልባክ (Fallback)
         day_info = {
             "holiday": "የዕለቱ መንፈሳዊ በዓል",
             "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
