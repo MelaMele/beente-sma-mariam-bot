@@ -7,6 +7,7 @@ import requests
 
 app = Flask(__name__)
 handler = app 
+application = app
 
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
@@ -37,7 +38,6 @@ def get_ethiopian_date():
         eth_month = 10 # ሰኔ
         eth_day = utc_now.day - 8
     else:
-        # ለሌሎች ወራት ጊዜያዊ ነባሪ (ሰኔ)
         eth_month = 10
         eth_day = utc_now.day
         
@@ -124,9 +124,16 @@ def cron_reminder():
     day_info = calendar_data.get(key, calendar_data.get("10-28"))
     
     if not day_info:
-        return jsonify({"status": "error", "message": "የዕለቱ ዳታ በ JSON ውስጥ አልተገኘም"}), 404
+        # የዳታቤዝ ፋልባክ (Fallback)
+        day_info = {
+            "holiday": "የዕለቱ መንፈሳዊ በዓል",
+            "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
+            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።",
+            "wongel_zirzir": "የወንጌልን ሰፊ ትምህርት በሕይወታችን እንተርጉመው።",
+            "abew_timhirt": "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም።” — ቅዱስ ዮሐንስ አፈወርቅ",
+            "tseolot": "አቤቱ አምላካችን ሆይ! በቸርነትህ ጠብቀን።"
+        }
 
-    # 🔄 አራት የተለያዩ የይዘት ዓይነቶች (የአበው ትምህርትን ጨምሮ)
     content_type = random.choice(["sinksar_gitsawe", "wongel_zirzir", "tseolot", "abew_timhirt"])
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ {eth_month_name} {eth_day} ቀን</b>\n\n"
     
@@ -146,8 +153,7 @@ def cron_reminder():
         body = (
             f"🙏 <b>የዕለቱ የጸሎት ማዕድ፦</b>\n{tseolot_text}"
         )
-    else: # abew_timhirt
-        # በመጀመሪያ ከ JSON ውስጥ አዲሱን 'abew_timhirt' ይፈልጋል፣ ከሌለ ከ GENERAL_ADVICE በዘፈቀደ ይመርጣል
+    else:
         advice_text = day_info.get('abew_timhirt', random.choice(GENERAL_ADVICE))
         body = (
             f"💡 <b>የአበው ምክርና መንፈሳዊ ተግሣጽ፦</b>\n{advice_text}"
@@ -165,11 +171,15 @@ def cron_reminder():
     audio_url = f"https://{request.host}/mary.mp3"
     
     success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
+    
     if success:
-        return jsonify({"status": "success", "message": f"{key} ቀን {content_type} ይዘት ወደ ቻናል ተልኳል"}), 200
+        return jsonify({"status": "success", "message": f"{key} ቀን {content_type} ይዘት ከነመዝሙሩ ወደ ቻናል ተልኳል"}), 200
     else:
-        send_message(CHAT_ID, formatted_msg, reply_markup)
-        return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ ተልኳል"}), 200
+        fallback_success = send_message(CHAT_ID, formatted_msg, reply_markup)
+        if fallback_success:
+            return jsonify({"status": "fallback", "message": "ኦዲዮው አልሰራም ግን በጽሑፍ ብቻ ወደ ቻናል ተልኳል"}), 200
+        else:
+            return jsonify({"status": "error", "message": "ወደ ቻናሉ መላክ አልተቻለም። እባክህ ቦቱ Admin መሆኑን እና CHAT_ID ትክክል መሆኑን አረጋግጥ"}), 500
 
 def send_message(chat_id, text, reply_markup=None):
     url = f"{TELEGRAM_API}/sendMessage"
@@ -178,17 +188,9 @@ def send_message(chat_id, text, reply_markup=None):
     try: return requests.post(url, json=payload).status_code == 200
     except: return False
 
-audio_url = f"https://{request.host}/mary.mp3"
-    
-    # መጀመሪያ ኦዲዮውን ለመላክ ይሞክራል
-    success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
-    
-    if success:
-        return jsonify({"status": "success", "message": f"{key} ቀን {content_type} ይዘት ከነመዝሙሩ ወደ ቻናል ተልኳል"}), 200
-    else:
-        # ኦዲዮው እምቢ ካለው ወዲያውኑ በጽሑፍ ብቻ ይልካል
-        fallback_success = send_message(CHAT_ID, formatted_msg, reply_markup)
-        if fallback_success:
-            return jsonify({"status": "fallback", "message": "ኦዲዮው አልሰራም ግን በጽሑፍ ብቻ ወደ ቻናል ተልኳል"}), 200
-        else:
-            return jsonify({"status": "error", "message": "ወደ ቻናሉ መላክ አልተቻለም። እባክህ ቦቱ Admin መሆኑን እና CHAT_ID ትክክል መሆኑን አረጋግጥ"}), 500
+def send_audio(chat_id, audio_url, caption, reply_markup=None):
+    url = f"{TELEGRAM_API}/sendAudio"
+    payload = {"chat_id": chat_id, "audio": audio_url, "caption": caption, "parse_mode": "HTML"}
+    if reply_markup: payload["reply_markup"] = reply_markup
+    try: return requests.post(url, json=payload).status_code == 200
+    except: return False
