@@ -26,9 +26,9 @@ function getEthiopianDate() {
     let ethDay = 1;
     let ethYear = gYear - 8;
 
-    // በጁላይ (July) ወር ውስጥ ከሆንን
+    // በጁላይ (July) ወር ውስጥ ከሆንን (ዛሬ ጁላይ 5 = ሰኔ 28)
     if (gMonth === 7) {
-        ethDay = gDay + 23; // July 1 = ሰኔ 24 | July 4 = ሰኔ 27
+        ethDay = gDay + 23; 
         if (ethDay > 30) {
             ethDay = ethDay - 30;
             ethMonth = 11; // ሐምሌ
@@ -47,35 +47,14 @@ function getEthiopianDate() {
     return { month: ethMonth, day: ethDay, year: ethYear };
 }
 
-// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ
+// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ (ለሚኒ አፑ አጠር ያለ)
 const dailySpiritualData = {
-    "10_24": {
-        date: "ሰኔ 24 ቀን 2018 ዓ.ም",
-        holiday: "የአቡነ ተክለሃይማኖት በዓል",
-        sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ታላቁ ጻድቅ አቡነ ተክለሃይማኖት በደብረ ሊባኖስ በጸሎት የቆሙበትና ገዳማውያንን የባረኩበት ታላቅ የዕረፍታቸው መታሰቢያ በዓል ነው።",
-        gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ኤፌ. 6:10 | ንፍቅ፦ 2ኛ ጴጥ. 3:1 | ወንጌል፦ ማቴ. 19:27",
-        quote: "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ"
-    },
-    "10_25": {
-        date: "ሰኔ 25 ቀን 2018 ዓ.ም",
-        holiday: "ቅዱስ ይሁዳ ሐዋርያ",
-        sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ከ72ቱ አርድእት አንዱ የሆነውና ጌታችንን በታማኝነት ያገለገለው ቅዱስ ይሁዳ ሐዋርያ የሰማዕትነት አክሊል የተቀበለበት ዕለት ነው።",
-        gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ይሁዳ 1:1 | ንፍቅ፦ 1ኛ ዮሐ. 2:1 | ወንጌል፦ ሉቃ. 10:1",
-        quote: "“በፈተና ውስጥ ስትሆን ተስፋ አትቁረጥ፤ ይልቁንም ወደ እግዚአብሔር ጩኽ። እርሱ ቅርብ ነውና።” — ቅዱስ ኤፍሬም ሶርያዊ"
-    },
-    "10_26": {
-        date: "ሰኔ 26 ቀን 2018 ዓ.ም",
-        holiday: "ቅዱስ ያዕቆብ ዘንሲቢን",
-        sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> የታላቁ የንሲቢን ኤጲስቆጶስ ቅዱስ ያዕቆብ መታሰቢያ ነው። በጸሎቱ ድንቆችን ያደረገ እና የኒቅያ ጉባኤ ተካፋይ የነበረ አባት ነው።",
-        gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ 1ኛ ቆሮ. 4:9 | ንፍቅ፦ ያዕ. 5:13 | ወንጌል፦ ዮሐ. 10:11",
-        quote: "“ጸሎት ማለት ከእግዚአብሔር ጋር መነጋገር ነው። በጸሎት ጊዜ ልብህ ከምድር ይልቅ ወደ ሰማይ ይቅረብ።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
-    },
-    "10_27": {
-        date: "ሰኔ 27 ቀን 2018 ዓ.ም",
-        holiday: "የቅዱስ ቶማስ ሐዋርያ በዓል",
-        sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት የጌታችንን ትንሳኤ በጣቶቹ ዳስሶ ያመነው ታላቁ ሐዋርያ ቅዱስ ቶማስ በህንድ ሀገር ወንጌልን ሰብኮ በተአምራቱ ብዙዎችን ያጠመቀበት መታሰቢያ ነው።",
-        gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ 1ኛ ቆሮ. 12:12 | ንፍቅ፦ 1ኛ ጴጥ. 1:13 | ወንጌል፦ ዮሐ. 20:24",
-        quote: "“ሳያዩ የሚያምኑ ብፁዓን ናቸው።” — ጌታችን ኢየሱስ ክርስቶስ"
+    "10_28": {
+        date: "ሰኔ 28 ቀን 2018 ዓ.ም",
+        holiday: "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል",
+        sinksar: "<b>📖 ዕለታዊ ስንክሳር፦</b> በዚህች ዕለት ጌታችን መድኃኒታችን ኢየሱስ ክርስቶስ ለአለም የገባውን የምሕረት ቃልኪዳን ያሰበበት እና ታላቁ ሰማዕት ቅዱስ ቴዎድሮስ በሰማዕትነት ያረፈበት ዕለት ነው።",
+        gitsawe: "<b>📜 የዕለቱ ግጻዌ፦</b> ዲያቆን፦ ዕብ. 8:1 | ንፍቅ፦ 1ኛ ጴጥ. 2:1 | ወንጌል፦ ማቴ. 1:21",
+        quote: "🔍 ዝርዝር ትምህርቱንና የወንጌል አንድምታውን በኢንፎ መላ ቻናላችን ላይ በሰፊው ይማሩ!"
     }
 };
 
@@ -84,7 +63,8 @@ function updateDailyContent() {
     const ethDate = getEthiopianDate();
     const dataKey = `${ethDate.month}_${ethDate.day}`;
     
-    const todayData = dailySpiritualData[dataKey] ? dailySpiritualData[dataKey] : dailySpiritualData["10_24"];
+    // ዳታው ከሌለ እንደ ነባሪ የሰኔ 28ን ዳታ እንዲያሳይ ማድረግ
+    const todayData = dailySpiritualData[dataKey] ? dailySpiritualData[dataKey] : dailySpiritualData["10_28"];
 
     if (document.getElementById('ethiopian-date')) document.getElementById('ethiopian-date').innerText = todayData.date;
     if (document.getElementById('holiday-title')) document.getElementById('holiday-title').innerText = todayData.holiday;
@@ -148,7 +128,7 @@ if (submitDonationBtn) {
     });
 }
 
-// 8. መዝሙር ማጫወቻ አሠራር (የስህተት መልእክት ፖፕ-አፕ እንዳያሳይ የተከለከለ)
+// 8. መዝሙር ማጫወቻ አሠራር
 function updateMusicButtonState() {
     if (!mezmur || !musicToggleBtn) return;
     if (mezmur.paused) {
@@ -165,7 +145,6 @@ function updateMusicButtonState() {
 if (musicToggleBtn && mezmur) {
     musicToggleBtn.addEventListener('click', () => {
         if (mezmur.paused) {
-            // .catch(() => {}) ማድረጋችን ማንኛውንም የብሮውዘር ስህተት በምስጢር ይውጠዋል፤ ፖፕ-አፕ አያሳይም
             mezmur.play()
                 .then(updateMusicButtonState)
                 .catch(() => { 
@@ -217,17 +196,19 @@ if (cbeModalBtn) cbeModalBtn.addEventListener('click', copyCBE);
 if (teleBtn) teleBtn.addEventListener('click', copyTele);
 if (teleModalBtn) teleModalBtn.addEventListener('click', copyTele);
 
-// 11. የሪፈራል ግብዣ ሊንክ መፍጠሪያ ቁልፍ
+// 11. 🔗 የሪፈራል ግብዣ ሊንክ (ሰዎችን ቀጥታ ወደ ቻናሉ የሚወስድ ስልት)
 if (shareBtn) {
     shareBtn.addEventListener('click', () => {
-        const botUsername = "BeenteSmaMariam_bot"; 
-        const inviteLink = `https://t.me/${botUsername}?start=ref_${telegramUserId}`;
+        // ✨ በትዕምርተ ጥቅስ የተስተካከለ የቻናል መጋበዣ ሊንክ
+        const inviteLink = "https://t.me/infomela06";
+        const shareText = "ወደ ቤተሳይዳ መንፈሳዊ በጎ አድራጎት መድረክ ይግቡና የበረከት ተሳታፊ ይሁኑ! ✨";
         
         if (tg) {
-            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent("ወደ ቤተሳይዳ መንፈሳዊ በጎ አድራጎት መድረክ ይግቡና የበረከት ተሳታፊ ይሁኑ! ✨")}`);
+            // የቴሌግራም share ሊንክ አጠቃቀም ሥርዓት
+            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`);
         } else {
             navigator.clipboard.writeText(inviteLink);
-            alert("የመጋበዣ ሊንክዎ ኮፒ ሆኗል፦ " + inviteLink);
+            alert("የመጋበዣ የቻናል ሊንክዎ ኮፒ ሆኗል፦ " + inviteLink);
         }
     });
 }
