@@ -59,6 +59,13 @@ def load_calendar_data():
                 continue
     return {}
 
+# 💡 ተጨማሪ የአበው ምክሮች ስብስብ
+GENERAL_ADVICE = [
+    "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ",
+    "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅ።” — የአበው ምክር",
+    "“ምጽዋት ስታደርግ ቀኝህ የምታደርገውን ግራህ አያውቀው የተባለው ለትዕቢት እንዳይሆንብህ ነው።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
+]
+
 @app.route('/api', methods=['POST'])
 def webhook():
     update = request.get_json()
@@ -90,12 +97,13 @@ def get_daily_blessing():
     calendar_data = load_calendar_data()
     key = f"{eth_month}-{eth_day}"
     
-    # 🛡️ መከላከያ፦ በ JSON ውስጥ ቀኑ ከጠፋ የሰኔ 28ን (10-28) ዳታ ይወስዳል
-    day_info = calendar_data.get(key, calendar_data.get("10-28", {
-        "holiday": "የዕለቱ ቅዱስ በዓል",
-        "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
-        "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።"
-    }))
+    day_info = calendar_data.get(key)
+    if not day_info:
+        day_info = calendar_data.get("10-28", {
+            "holiday": "የዕለቱ ቅዱስ በዓል",
+            "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
+            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።"
+        })
     
     return jsonify({
         "ethiopian_date": f"{eth_month_name} {eth_day} ቀን 2018 ዓ.ም",
@@ -106,7 +114,7 @@ def get_daily_blessing():
         "quote": "🔍 ዝርዝር ትምህርቱን፣ ሰፊ የወንጌል አንድምታውንና ጸሎቱን በቻናላችን ላይ በሰፊው ይማሩ!"
     })
 
-# 🔔 ክሮን ጆብ - የተሟላ እና ሰፊ ይዘት ወደ ቻናል የሚያስተላልፍ
+# 🔔 ክሮን ጆብ - በየተራ ሰፋፊ ይዘቶችን ወደ ቻናል የሚያስተላልፍ
 @app.route('/api/cron-reminder', methods=['GET'])
 def cron_reminder():
     if not CHAT_ID:
@@ -116,7 +124,6 @@ def cron_reminder():
     calendar_data = load_calendar_data()
     key = f"{eth_month}-{eth_day}"
     
-    # 🛡️ ዋናው ማስተካከያ፦ ቀኑ በ JSON ውስጥ ከጠፋ 10-28ን ይፈልጋል፣ እሱም ከሌለ ነባሪ ዳታ ያዘጋጃል
     day_info = calendar_data.get(key)
     if not day_info:
         day_info = calendar_data.get("10-28")
@@ -131,16 +138,33 @@ def cron_reminder():
             "tseolot": "አቤቱ አምላካችን ሆይ! በቸርነትህ ጠብቀን።"
         }
 
+    # 🔄 በየሰዓቱ የተለያየ ይዘት እንዲወጣ በዘፈቀደ (Random) አንዱን ይመርጣል
+    content_type = random.choice(["sinksar", "wongel", "abew", "tseolot"])
+    
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ {eth_month_name} {eth_day} ቀን 2018 ዓ.ም</b>\n\n"
     
-    body = (
-        f"📖 <b>የዕለቱ በዓል፦</b> {day_info.get('holiday', 'የዕለቱ ቅዱስ በዓል')}\n\n"
-        f"📜 <b>የዕለቱ ስንክሳር መታሰቢያ፦</b>\n{day_info.get('sinksar', 'የለም')}\n\n"
-        f"☦️ <b>የዕለቱ ቅዱስ ግጻዌ፦</b>\n{day_info.get('gitsawe', 'የለም')}\n\n"
-        f"✨ <b>የወንጌል ሰፊ አንድምታ ትርጓሜና ትምህርት፦</b>\n{day_info.get('wongel_zirzir', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።')}\n\n"
-        f"💡 <b>የአበው ምክርና መንፈሳዊ ተግሣጽ፦</b>\n{day_info.get('abew_timhirt', 'ምጽዋት የጽድቅ መክፈቻ ናት።')}\n\n"
-        f"🙏 <b>የዕለቱ የጸሎት ማዕድ፦</b>\n{day_info.get('tseolot', 'አቤቱ አምላካችን ሆይ! በቸርነትህ ጠብቀን።')}"
-    )
+    if content_type == "sinksar":
+        body = (
+            f"📖 <b>የዕለቱ በዓል፦</b> {day_info.get('holiday', 'የዕለቱ ቅዱስ በዓል')}\n\n"
+            f"📜 <b>የዕለቱ ስንክሳር መታሰቢያና ታሪክ፦</b>\n{day_info.get('sinksar', 'የለም')}\n\n"
+            f"☦️ <b>የዕለቱ ቅዱስ ግጻዌ፦</b>\n{day_info.get('gitsawe', 'የለም')}"
+        )
+    elif content_type == "wongel":
+        zirzir_text = day_info.get('wongel_zirzir', day_info.get('terguame', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።'))
+        body = (
+            f"📖 <b>የዕለቱ በዓል፦</b> {day_info.get('holiday', 'የዕለቱ ቅዱስ በዓል')}\n\n"
+            f"✨ <b>የወንጌል ሰፊ አንድምታ ትርጓሜና ትምህርት፦</b>\n{zirzir_text}"
+        )
+    elif content_type == "abew":
+        advice_text = day_info.get('abew_timhirt', random.choice(GENERAL_ADVICE))
+        body = (
+            f"💡 <b>የአበው ምክርና መንፈሳዊ ተግሣጽ፦</b>\n{advice_text}"
+        )
+    else: # tseolot
+        tseolot_text = day_info.get('tseolot', "አቤቱ አምላካችን ሆይ! በቸርነትህ ጠብቀን።")
+        body = (
+            f"🙏 <b>የዕለቱ የጸሎት ማዕድ፦</b>\n{tseolot_text}"
+        )
         
     formatted_msg = base_header + body + "\n\n🕊️ <i>በእንተ ስማ ለማርያም እያልን የተራቡትን የምንመግብበት የቤተሳይዳ በጎ አድራጎት አባል ይሁኑ።</i>"
     
@@ -156,13 +180,13 @@ def cron_reminder():
     success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
     
     if success:
-        return jsonify({"status": "success", "message": f"{key} ቀን ሙሉ ይዘት ከነመዝሙሩ ተልኳል"}), 200
+        return jsonify({"status": "success", "message": f"{content_type} ይዘት ከነመዝሙሩ ተልኳል"}), 200
     else:
         fallback_success = send_message(CHAT_ID, formatted_msg, reply_markup)
         if fallback_success:
-            return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ በሰፊው ተልኳል"}), 200
+            return jsonify({"status": "fallback", "message": f"{content_type} ይዘት በጽሑፍ ብቻ ተልኳል"}), 200
         else:
-            return jsonify({"status": "error", "message": "ወደ ቻናሉ መላክ አልተቻለም"}), 500
+            return jsonify({"status": "error", "message": "መላክ አልተቻለም"}), 500
 
 def send_message(chat_id, text, reply_markup=None):
     url = f"{TELEGRAM_API}/sendMessage"
