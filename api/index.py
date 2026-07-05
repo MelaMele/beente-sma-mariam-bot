@@ -59,7 +59,7 @@ def load_calendar_data():
                 continue
     return {}
 
-# 💡 ተጨማሪ የአበው ምክሮች ስብስብ
+# 💡 ተጨማሪ የአበው ምክሮች ስብስብ (ዳታው በ JSON ውስጥ ከጠፋ ለመጠባበቂያ)
 GENERAL_ADVICE = [
     "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ",
     "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅ።” — የአበው ምክር",
@@ -99,6 +99,7 @@ def get_daily_blessing():
     
     day_info = calendar_data.get(key)
     if not day_info:
+        # ዳታው ከጠፋ ወደ 10-28 ይሄዳል፣ እሱም ከጠፋ ባዶ እንዳይሆን መሸፈኛ
         day_info = calendar_data.get("10-28", {
             "holiday": "የዕለቱ ቅዱስ በዓል",
             "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
@@ -125,9 +126,13 @@ def cron_reminder():
     key = f"{eth_month}-{eth_day}"
     
     day_info = calendar_data.get(key)
+    
+    # 🚨 እዚህ ጋ ነው የተስተካከለው! 
+    # በ JSON ውስጥ ለዛሬ ቀን ዳታ ከጠፋ ብቻ ወደ 10-28 እንዲሄድ ተደርጓል
     if not day_info:
         day_info = calendar_data.get("10-28")
         
+    # አሁንም ዳታ ፈጽሞ ካልተገኘ (JSON ከተበላሸ) ቦቱ Error ሰጥቶ እንዳይቆም ብቻ መጠባበቂያ
     if not day_info:
         day_info = {
             "holiday": "የዕለቱ መንፈሳዊ በዓል",
