@@ -11,9 +11,13 @@ handler = app
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
 CHAT_ID = os.environ.get("NOTIFICATION_CHAT_ID")
-BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "BeenteSmaMariam_bot")
 
-# 📅 የሰርቨሩን (UTC) ቀን ወደ ትክክለኛው የኢትዮጵያ ቀን መቀየሪያ (ዛሬ ጁላይ 5 = ሰኔ 28)
+# 🔗 የቦቱ ሪፈራል ሊንክ ወደ ቻናሉ እንዲሆን የቻናልዎን ሊንክ እዚህ ያስገቡ (ያለ @ ምልክት)
+# ለምሳሌ፦ "የቻናል_ዩዘርኔም" (በ Environment Variable መልክ መተካትም ይቻላል)
+CHANNEL_USERNAME = os.environ.get("TELEGRAM_CHANNEL_USERNAME", "BeenteSmaMariam_Channel") 
+CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
+
+# 📅 የሰርቨሩን ሰዓት ወደ ትክክለኛው የኢትዮጵያ ቀን መቀየሪያ (ዛሬ ጁላይ 5 = ሰኔ 28)
 def get_ethiopian_date():
     utc_now = datetime.utcnow() + timedelta(hours=3) # የአዲስ አበባ ሰዓት
     if utc_now.month == 7: # ጁላይ
@@ -30,19 +34,28 @@ def get_ethiopian_date():
         eth_day = utc_now.day
     return eth_month, eth_day
 
-# 📚 ሰኔ 28 ቀን የሚነበቡ ሙሉ መንፈሳዊ ማዕዶች ስብስብ
-JUNE_28_DATA = {
-    "sinksar": "በዚህች ዕለት ጌታችን መድኃኒታችን ኢየሱስ ክርስቶስ ለአለም የገባውን የምሕረት ቃልኪዳን ያሰበበት እና ታላቁ ሰማዕት ቅዱስ ቴዎድሮስ በሰማዕትነት ያለፈበት ወርሃዊ መታሰቢያ ድንቅ ዕለት ነው።",
-    "gitsawe": "ዲያቆን፦ ዕብ. 8:1-6 | ንፍቅ፦ 1ኛ ጴጥ. 2:1-5 | ካህን፦ ሐዋ. 3:12-18",
-    "mazmur": "📜 <b>የዕለቱ የዳዊት መዝሙር፦</b>\n“እግዚአብሔር ብርሃኔና መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው? እግዚአብሔር የሕይወቴ መታመኛዋ ነው፤ የሚያስደነግጠኝ ማን ነው?” (መዝሙር 26:1)",
-    "wongel": "📖 <b>የዕለቱ ቅዱስ ወንጌል፦</b>\n(ማቴዎስ 1:21-25) 'ልጅም ትወልዳለች፤ እርሱ ሕዝቡን ከኃጢአታቸው ያድናቸዋልና ስሙን ኢየሱስ ትለዋለህ።'",
-    "terguame": "✨ <b>የወንጌል አንድምታ ትርጓሜ፦</b>\n'ሕዝቡን ከኃጢአታቸው ያድናቸዋል' ማለት ጌታችን ሰው የሆነው ምድራዊ ሥልጣንን ለመያዝ ሳይሆን፣ ሰውን ሁሉ ከዲያብሎስና ከዘላለም ሞት ባርነት ነፃ ለማውጣት መሆኑን ቅዱስ ዮሐንስ አፈወርቅ ይተረጉመዋል።",
-    "abew": [
-        "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ",
-        "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅም።” — የአበው ምክር",
-        "“ምጽዋት ስታደርግ ቀኝህ የምታደርገውን ግራህ አያውቀው የተባለው ለትዕቢት እንዳይሆንብህ ነው።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
+# 📁 በ Repository ውስጥ ያለውን calendar_data.json ፋይል በቀጥታ የሚያነብ ፋንክሽን
+def load_calendar_data():
+    # በ Vercel ላይ ፋይሉ የሚቀመጥበትን ትክክለኛ መንገድ መፈለግ
+    possible_paths = [
+        os.path.join(os.path.dirname(__file__), '..', 'calendar_data.json'),
+        'calendar_data.json'
     ]
-}
+    for path in possible_paths:
+        if os.path.exists(path):
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except:
+                continue
+    return {}
+
+# 💡 የአበው ምክሮች ስብስብ
+GENERAL_ADVICE = [
+    "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ",
+    "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅም።” — የአበው ምክር",
+    "“ምጽዋት ስታደርግ ቀኝህ የምታደርገውን ግራህ አያውቀው የተባለው ለትዕቢት እንዳይሆንብህ ነው።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
+]
 
 @app.route('/api', methods=['POST'])
 def webhook():
@@ -54,64 +67,85 @@ def webhook():
     chat_id = message["chat"]["id"]
     text = message.get("text", "")
 
+    # ተጠቃሚው ቦቱ ላይ /start ሲል ቀጥታ ወደ ቻናሉ የሚወስድ ሊንክ እንሰጠዋለን (ሪፈራል ስልት)
     if text.startswith("/start"):
         welcome_text = (
             f"እንኳን ወደ <b>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት</b> መድረክ በደህና መጡ! 🎉\n\n"
-            f"ይህ መድረክ 'በእንተ ስማ ለማርያም' እያልን የተቸገሩትን የምንረዳበት የምሕረት ቤት ነው።\n\n"
-            f"እባክዎ ከታች ያለውን ቁልፍ ተጭነው መድረኩን ይክፈቱ፦"
+            f"የዕለቱን ሙሉ ስንክሳር፣ ግጻዌ፣ የወንጌል ትርጓሜና ያማሩ መንፈሳዊ መዝሙሮችን ለማግኘት "
+            f"እባክዎ መጀመሪያ ይፋዊ ቻናላችንን ይቀላቀሉ፦"
         )
-        reply_markup = {"inline_keyboard": [[{"text": "❤️ ቤተሳይዳን ክፈት", "web_app": {"url": f"https://{request.host}/"}}]]}
+        reply_markup = {
+            "inline_keyboard": [[
+                {"text": "📢 ቻናላችንን ይቀላቀሉ", "url": CHANNEL_URL}
+            ]]
+        }
         send_message(chat_id, welcome_text, reply_markup)
     return "OK", 200
 
 @app.route('/api/daily-blessing', methods=['GET'])
 def get_daily_blessing():
-    _, eth_day = get_ethiopian_date()
+    eth_month, eth_day = get_ethiopian_date()
+    calendar_data = load_calendar_data()
+    key = f"{eth_month}-{eth_day}"
+    
+    # ከ calendar_data.json ላይ መረጃውን መፈለግ
+    day_info = calendar_data.get(key, calendar_data.get("10-28", {
+        "holiday": "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል",
+        "sinksar": "በዚህች ዕለት ጌታችን መድኃኒታችን ኢየሱስ ክርስቶስ ለአለም የገባውን የምሕረት ቃልኪዳን ያሰበበት ዕለት ነው።",
+        "gitsawe": "ዲያቆን፦ ዕብ. 8:1 | ወንጌል፦ ማቴ. 1:21"
+    }))
+    
     return jsonify({
         "ethiopian_date": f"ሰኔ {eth_day} ቀን 2018 ዓ.ም",
-        "holiday_name": "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል",
+        "holiday_name": day_info["holiday"],
         "image_url": "mary.jpg",
-        "sinksar": JUNE_28_DATA["sinksar"],
-        "gitsawe": JUNE_28_DATA["gitsawe"],
-        "quote": JUNE_28_DATA["wongel"]
+        "sinksar": day_info["sinksar"],
+        "gitsawe": day_info["gitsawe"],
+        "quote": day_info.get("terguame", "እግዚአብሔር ከእኛ ጋር ነው።")
     })
 
-# 🔔 በየ 30 ደቂቃው ይዘቱን እየቀያየረ ወደ ቻናል የሚልክ ዋናው ክሮን ጆብ
+# 🔔 በየ 30 ደቂቃው ከ calendar_data.json እያነበበ ወደ ቻናል የሚልክ ዋናው ክሮን ጆብ
 @app.route('/api/cron-reminder', methods=['GET'])
 def cron_reminder():
     if not CHAT_ID:
         return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
         
-    _, eth_day = get_ethiopian_date()
+    eth_month, eth_day = get_ethiopian_date()
+    calendar_data = load_calendar_data()
+    key = f"{eth_month}-{eth_day}"
     
-    # 🔄 በየ 30 ደቂቃው መልእክቱ እንዲቀያየር በዘፈቀደ (Random) አንዱን መምረጥ
-    content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
+    day_info = calendar_data.get(key, calendar_data.get("10-28"))
     
+    if not day_info:
+        return jsonify({"status": "error", "message": "የዕለቱ ዳታ በ JSON ውስጥ አልተገኘም"}), 404
+
+    # 🔄 በየ 30 ደቂቃው ይዘቱ እንዲቀያየር በዘፈቀደ አንዱን መምረጥ
+    content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "advice"])
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ ሰኔ {eth_day} ቀን</b>\n\n"
     
     if content_type == "sinksar_gitsawe":
         body = (
-            f"📜 <b>የዕለቱ ስንክሳር፦</b>\n{JUNE_28_DATA['sinksar']}\n\n"
-            f"☦️ <b>የዕለቱ ግጻዌ፦</b>\n{JUNE_28_DATA['gitsawe']}"
+            f"📜 <b>የዕለቱ ስንክሳር፦</b>\n{day_info['sinksar']}\n\n"
+            f"☦️ <b>የዕለቱ ግጻዌ፦</b>\n{day_info['gitsawe']}"
         )
     elif content_type == "wongel_terguame":
         body = (
-            f"{JUNE_28_DATA['wongel']}\n\n"
-            f"{JUNE_28_DATA['terguame']}"
+            f"📖 <b>የዕለቱ በዓል፦</b> {day_info['holiday']}\n\n"
+            f"✨ <b>የዕለቱ ትምህርት/ትርጓሜ፦</b>\n{day_info.get('terguame', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።')}"
         )
     else:
         body = (
-            f"{JUNE_28_DATA['mazmur']}\n\n"
-            f"💡 <b>የአበው ትምህርት፦</b>\n{random.choice(JUNE_28_DATA['abew'])}"
+            f"💡 <b>የአበው ትምህርት፦</b>\n{random.choice(GENERAL_ADVICE)}\n\n"
+            f"📜 <b>የዕለቱ የዳዊት መዝሙር፦</b>\n“እግዚአብሔር ብርሃኔና መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው?” (መዝሙር 26:1)"
         )
         
-    formatted_msg = base_header + body + "\n\n🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
+    formatted_msg = base_header + body + "\n\n🕊️ <i>በእንተ ስማ ለማርያም እያልን የተራቡትን የምንመግብበት የቤተሳይዳ በጎ አድራጎት አባል ይሁኑ።</i>"
     
-    # 🔗 ጎልቶ የሚታይ የመግቢያ ቁልፍ (Button)
+    # 🔗 ጎልቶ የሚታይ የመግቢያ ቁልፍ (Button) -> ወደ ቻናሉ መመለሻ ሊንክ
     reply_markup = {
         "inline_keyboard": [[{
-            "text": "💎 ማንም ሳይጸጸት በደስታ ይስጥ ➔ [ ወደ ቦቱ ግባ ] 💎",
-            "url": f"https://t.me/{BOT_USERNAME}?start=true"
+            "text": "💎 ማንም ሳይጸጸት በደስታ ይስጥ ➔ [ ወደ ቻናሉ ግባ ] 💎",
+            "url": CHANNEL_URL
         }]]
     }
     
@@ -119,7 +153,7 @@ def cron_reminder():
     
     success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
     if success:
-        return jsonify({"status": "success", "message": f"{content_type} ይዘት ከነመዝሙሩ ተልኳል"}), 200
+        return jsonify({"status": "success", "message": f"{key} ቀን {content_type} ይዘት ከ JSON ተነቦ ተልኳል"}), 200
     else:
         send_message(CHAT_ID, formatted_msg, reply_markup)
         return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ ተልኳል"}), 200
