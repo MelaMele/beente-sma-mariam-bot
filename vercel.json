@@ -1,10 +1,7 @@
 {
   "version": 2,
   "builds": [
-    { 
-      "src": "api/index.py", 
-      "use": "@vercel/python" 
-    },
+    { "src": "api/index.py", "use": "@vercel/python" },
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "style.css", "use": "@vercel/static" },
     { "src": "app.js", "use": "@vercel/static" },
@@ -17,5 +14,11 @@
     { "src": "/api/cron-reminder", "dest": "api/index.py" },
     { "src": "/api", "dest": "api/index.py" },
     { "src": "/(.*)", "dest": "/$1" }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron-reminder",
+      "schedule": "0 4,6,9,12,14,16 * * *"
+    }
   ]
 }
