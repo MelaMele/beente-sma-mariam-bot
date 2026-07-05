@@ -1,4 +1,5 @@
 import os
+import random
 import json
 from datetime import datetime, timedelta
 from flask import Flask, request, jsonify
@@ -24,7 +25,6 @@ def get_exact_ethiopian_info():
     current_day = utc_now.day
     current_month = utc_now.month
     
-    # ጁላይ ወር ላይ ከሆንን (ጁላይ 1 = ሰኔ 24 ... ጁላይ 7 = ሰኔ 30። ጁላይ 8 = ሐምሌ 1)
     if current_month == 7:
         if current_day <= 7:
             eth_month = 10
@@ -34,13 +34,11 @@ def get_exact_ethiopian_info():
             eth_month = 11
             eth_day = current_day - 7   # ጁላይ 8 = ሐምሌ 1
             eth_month_name = "ሐምሌ"
-    # ጁን ወር ላይ ከሆንን 
     elif current_month == 6:
         eth_month = 10
         eth_day = current_day - 8
         eth_month_name = "ሰኔ"
     else:
-        # ነባሪ ፎልባክ
         eth_month = 10
         eth_day = 29
         eth_month_name = "ሰኔ"
@@ -85,17 +83,18 @@ def webhook():
         send_message(chat_id, welcome_text, reply_markup)
     return "OK", 200
 
-# 🎨 ሚኒ አፕ ኤፒአይ - ሁልጊዜ ከቻናሉ ጋር አንድ አይነት ቀን ያሳያል
+# 🎨 ሚኒ አፕ ኤፒአይ
 @app.route('/api/daily-blessing', methods=['GET'])
 def get_daily_blessing():
     eth_month, eth_day, eth_month_name = get_exact_ethiopian_info()
     calendar_data = load_calendar_data()
     key = f"{eth_month}-{eth_day}"
     
-    day_info = calendar_data.get(key, calendar_data.get("10-29", {
-        "holiday": "የዕለቱ መንፈሳዊ በዓል",
-        "sinksar": "የዕለቱ ሙሉ ስንክሳር በዳታቤዝ ውስጥ አልተገኘም።",
-        "gitsawe": "ዲያቆን፦ ዕብ. 8:1 | ወንጌል፦ ማቴ. 1:21"
+    # 🛡️ መከላከያ፦ በ JSON ውስጥ ቀኑ ከጠፋ የሰኔ 28ን (10-28) ዳታ ይወስዳል
+    day_info = calendar_data.get(key, calendar_data.get("10-28", {
+        "holiday": "የዕለቱ ቅዱስ በዓል",
+        "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
+        "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።"
     }))
     
     return jsonify({
@@ -117,19 +116,28 @@ def cron_reminder():
     calendar_data = load_calendar_data()
     key = f"{eth_month}-{eth_day}"
     
+    # 🛡️ ዋናው ማስተካከያ፦ ቀኑ በ JSON ውስጥ ከጠፋ 10-28ን ይፈልጋል፣ እሱም ከሌለ ነባሪ ዳታ ያዘጋጃል
     day_info = calendar_data.get(key)
-    
     if not day_info:
-        return jsonify({"status": "error", "message": f"ለቀን {key} የሚሆን ዳታ በ JSON ውስጥ አልተገኘም"}), 404
+        day_info = calendar_data.get("10-28")
+        
+    if not day_info:
+        day_info = {
+            "holiday": "የዕለቱ መንፈሳዊ በዓል",
+            "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
+            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።",
+            "wongel_zirzir": "የወንጌልን ሰፊ ትምህርት በሕይወታችን እንተርጉመው።",
+            "abew_timhirt": "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም።” — ቅዱስ ዮሐንስ አፈወርቅ",
+            "tseolot": "አቤቱ አምላካችን ሆይ! በቸርነትህ ጠብቀን።"
+        }
 
-    # 📝 ቁንጽል እንዳይሆን ሁሉንም ዋና ዋና መረጃዎች በአንድ ላይ አደራጅቶ ሰፊ መልእክት መሥራት
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ {eth_month_name} {eth_day} ቀን 2018 ዓ.ም</b>\n\n"
     
     body = (
         f"📖 <b>የዕለቱ በዓል፦</b> {day_info.get('holiday', 'የዕለቱ ቅዱስ በዓል')}\n\n"
         f"📜 <b>የዕለቱ ስንክሳር መታሰቢያ፦</b>\n{day_info.get('sinksar', 'የለም')}\n\n"
         f"☦️ <b>የዕለቱ ቅዱስ ግጻዌ፦</b>\n{day_info.get('gitsawe', 'የለም')}\n\n"
-        f"✨ <b>የወንጌል ሰፊ አንድምታ ትርጓሜና ትምህርት፦</b>\n{day_info.get('wongel_zirzir', day_info.get('terguame', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።'))}\n\n"
+        f"✨ <b>የወንጌል ሰፊ አንድምታ ትርጓሜና ትምህርት፦</b>\n{day_info.get('wongel_zirzir', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።')}\n\n"
         f"💡 <b>የአበው ምክርና መንፈሳዊ ተግሣጽ፦</b>\n{day_info.get('abew_timhirt', 'ምጽዋት የጽድቅ መክፈቻ ናት።')}\n\n"
         f"🙏 <b>የዕለቱ የጸሎት ማዕድ፦</b>\n{day_info.get('tseolot', 'አቤቱ አምላካችን ሆይ! በቸርነትህ ጠብቀን።')}"
     )
@@ -145,18 +153,16 @@ def cron_reminder():
     
     audio_url = f"https://{request.host}/mary.mp3"
     
-    # መጀመሪያ ከነሙሉ ይዘቱ መዝሙሩን ለመላክ ይሞክራል
     success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
     
     if success:
-        return jsonify({"status": "success", "message": f"{key} ቀን ሙሉ ይዘት ከነመዝሙሩ ወደ ቻናል ተልኳል"}), 200
+        return jsonify({"status": "success", "message": f"{key} ቀን ሙሉ ይዘት ከነመዝሙሩ ተልኳል"}), 200
     else:
-        # የቴሌግራም ካፕሽን የፊደል ብዛት ገደብ ካለፈ ወይም ኦዲዮው እምቢ ካለ በጽሑፍ ብቻ በሰፊው ይልካል
         fallback_success = send_message(CHAT_ID, formatted_msg, reply_markup)
         if fallback_success:
-            return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ በሰፊው ወደ ቻናል ተልኳል"}), 200
+            return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ በሰፊው ተልኳል"}), 200
         else:
-            return jsonify({"status": "error", "message": "ወደ ቻናሉ መላክ አልተቻለም።"}), 500
+            return jsonify({"status": "error", "message": "ወደ ቻናሉ መላክ አልተቻለም"}), 500
 
 def send_message(chat_id, text, reply_markup=None):
     url = f"{TELEGRAM_API}/sendMessage"
