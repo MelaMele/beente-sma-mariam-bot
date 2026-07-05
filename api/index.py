@@ -12,12 +12,13 @@ TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
 CHAT_ID = os.environ.get("NOTIFICATION_CHAT_ID")
 
-# 📢 የቻናልዎን ትክክለኛ ዩዘርኔም እዚህ ያስገቡ (ያለ @ ምልክት)
-CHANNEL_USERNAME = os.environ.get("TELEGRAM_CHANNEL_USERNAME", "BeenteSmaMariam_Channel") 
+# 📢 ያንተ ትክክለኛ የቴሌግራም ቻናል ዩዘርኔም
+CHANNEL_USERNAME = "infomela06" 
 CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
 
-# 🤖 የቦትዎ ትክክለኛ ዩዘርኔም (ያለ @ ምልክት)
+# 🤖 የቦትህ ዩዘርኔም (በ Environment Variable ካልተገኘ ነባሪውን ይጠቀማል)
 BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "BeenteSmaMariam_bot")
+BOT_URL = f"https://t.me/{BOT_USERNAME}?start=true"
 
 # 📅 የሰርቨሩን ሰዓት ወደ ትክክለኛው የኢትዮጵያ ቀን መቀየሪያ (ዛሬ ጁላይ 5 = ሰኔ 28)
 def get_ethiopian_date():
@@ -68,11 +69,11 @@ def webhook():
     chat_id = message["chat"]["id"]
     text = message.get("text", "")
 
-    # ተጠቃሚው ቦቱ ላይ /start ሲል መጀመሪያ ወደ ቻናሉ እንዲሄድ ማድረግ (ሪፈራል ስልት)
+    # ተጠቃሚው ቦቱ ላይ /start ሲል መጀመሪያ ወደ ቻናሉ ሄዶ እንዲማር ግብዣ ይደረግለታል
     if text.startswith("/start"):
         welcome_text = (
             f"እንኳን ወደ <b>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት</b> መድረክ በደህና መጡ! 🎉\n\n"
-            f"የዕለቱን ሙሉ ስንክሳር፣ ግጻዌ፣ የወንጌል ትርጓሜና ያማሩ መንፈሳዊ መዝሙሮችን ለማግኘት "
+            f"የዕለቱን ሙሉ ስንክሳር፣ ግጻዌ፣ የወንጌል ትርጓሜና ያማሩ መንፈሳዊ መዝሙሮችን በሰፊው ለማግኘትና ለመማር "
             f"እባክዎ መጀመሪያ ይፋዊ ቻናላችንን ይቀላቀሉ፦"
         )
         reply_markup = {
@@ -83,6 +84,7 @@ def webhook():
         send_message(chat_id, welcome_text, reply_markup)
     return "OK", 200
 
+# 🎨 በሚኒ አፑ ላይ ከሥዕሉ በታች አጭር የየዕለቱ ስንክሳር እና ግጻዌ ብቻ የሚሰጥ API
 @app.route('/api/daily-blessing', methods=['GET'])
 def get_daily_blessing():
     eth_month, eth_day = get_ethiopian_date()
@@ -99,12 +101,12 @@ def get_daily_blessing():
         "ethiopian_date": f"ሰኔ {eth_day} ቀን 2018 ዓ.ም",
         "holiday_name": day_info["holiday"],
         "image_url": "mary.jpg",
-        "sinksar": day_info["sinksar"],
-        "gitsawe": day_info["gitsawe"],
-        "quote": day_info.get("terguame", "እግዚአብሔር ከእኛ ጋር ነው።")
+        "sinksar": day_info["sinksar"], # አጭር ስንክሳር
+        "gitsawe": day_info["gitsawe"], # አጭር ግጻዌ
+        "quote": "🔍 ዝርዝር ትምህርቱንና የወንጌል አንድምታውን በቻናላችን ላይ በሰፊው ይማሩ!"
     })
 
-# 🔔 በየ 30 ደቂቃው ከ calendar_data.json እያነበበ ወደ ቻናል የሚልክ ዋናው ክሮን ጆብ
+# 🔔 በየ 30 ደቂቃው ሰፊ ማብራሪያዎችን ወደ ቻናል የሚያስተላልፈው ክሮን ጆብ
 @app.route('/api/cron-reminder', methods=['GET'])
 def cron_reminder():
     if not CHAT_ID:
@@ -124,27 +126,27 @@ def cron_reminder():
     
     if content_type == "sinksar_gitsawe":
         body = (
-            f"📜 <b>የዕለቱ ስንክሳር፦</b>\n{day_info['sinksar']}\n\n"
+            f"📜 <b>የዕለቱ ስንክሳር (በሰፊው)፦</b>\n{day_info['sinksar']}\n\n"
             f"☦️ <b>የዕለቱ ግጻዌ፦</b>\n{day_info['gitsawe']}"
         )
     elif content_type == "wongel_terguame":
         body = (
             f"📖 <b>የዕለቱ በዓል፦</b> {day_info['holiday']}\n\n"
-            f"✨ <b>የዕለቱ ትምህርት/ትርጓሜ፦</b>\n{day_info.get('terguame', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።')}"
+            f"✨ <b>የዕለቱ ዝርዝር ትምህርትና የወንጌል አንድምታ ትርጓሜ፦</b>\n{day_info.get('terguame', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።')}"
         )
     else:
         body = (
-            f"💡 <b>የአበው ትምህርት፦</b>\n{random.choice(GENERAL_ADVICE)}\n\n"
+            f"💡 <b>የአበው ትምህርትና ምክር፦</b>\n{random.choice(GENERAL_ADVICE)}\n\n"
             f"📜 <b>የዕለቱ የዳዊት መዝሙር፦</b>\n“እግዚአብሔር ብርሃኔና መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው?” (መዝሙር 26:1)"
         )
         
     formatted_msg = base_header + body + "\n\n🕊️ <i>በእንተ ስማ ለማርያም እያልን የተራቡትን የምንመግብበት የቤተሳይዳ በጎ አድራጎት አባል ይሁኑ።</i>"
     
-    # 🔗 ➔ የተስተካከለ የቦት መግቢያ ሊንክ (t.me ይላል፣ ወደ ቦቱ ይወስዳል)
+    # 🔗 ከቻናሉ ወደ ቦቱ መግቢያ የሚወስደው ቁልፍ (ትክክለኛ BOT_URL ተጠቅሟል)
     reply_markup = {
         "inline_keyboard": [[{
             "text": "💎 ማንም ሳይጸጸት በደስታ ይስጥ ➔ [ ወደ ቦቱ ግባ ] 💎",
-            "url": f"https://t.me/{BOT_USERNAME}?start=true"
+            "url": BOT_URL
         }]]
     }
     
@@ -152,7 +154,7 @@ def cron_reminder():
     
     success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
     if success:
-        return jsonify({"status": "success", "message": f"{key} ቀን {content_type} ይዘት ከ JSON ተነቦ ተልኳል"}), 200
+        return jsonify({"status": "success", "message": f"{key} ቀን {content_type} ይዘት ወደ ቻናል ተልኳል"}), 200
     else:
         send_message(CHAT_ID, formatted_msg, reply_markup)
         return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ ተልኳል"}), 200
