@@ -30,7 +30,7 @@ def get_ethiopian_date():
     
     if utc_now.month == 7: # ጁላይ
         eth_month = 10 # ሰኔ
-        eth_day = utc_now.day + 23 # ጁላይ 1 = ሰኔ 24 ስለሆነ (1 + 23 = 24)
+        eth_day = utc_now.day + 24 # ጁላይ 1 = ሰኔ 24 ስለሆነ (1 + 23 = 24)
         if eth_day > 30:
             eth_month = 11 # ሐምሌ
             eth_day = eth_day - 30
