@@ -26,7 +26,7 @@ function getEthiopianDate() {
     let ethDay = 1;
     let ethYear = gYear - 8;
 
-    // በጁላይ (July) ወር ውስጥ ከሆንን (ዛሬ ጁላይ 5 = ሰኔ 28)
+    // በጁላይ (July) ወር ውስጥ ከሆንን (ዛሬ ጁላይ 6 = ሰኔ 29)
     if (gMonth === 7) {
         ethDay = gDay + 23; 
         if (ethDay > 30) {
@@ -47,35 +47,35 @@ function getEthiopianDate() {
     return { month: ethMonth, day: ethDay, year: ethYear };
 }
 
-// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ (ለሚኒ አፑ አጠር ያለ)
+// 3. የዕለታዊ ስንክሳር፣ ግጻዌ እና የአበው ምክር ዳታቤዝ
 const dailySpiritualData = {
     "10_28": {
         date: "ሰኔ 28 ቀን 2018 ዓ.ም",
-    "holiday": "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል",
-    "sinksar": "በዚህች ዕለት ጌታችን መድኃኒታችን ኢየሱስ ክርስቶስ ሥጋን ለብሶ በቅድስት ድንግል ማርያም ማኅፀን ያደረበትን የምሥጢረ ሥጋዌ ታላቅ በዓል እናስባለን።",
-    "gitsawe": "📖 የዕለቱ ንባባት፦\n• ዲያቆን፦ ዕብ. 8:1-13\n• ንፍቅ ዲያቆን፦ 1ኛ ጴጥ. 2:1-10\n• ንፍቅ ካህን ሐዋ. ሥራ፦ ሐዋ. 3:12-26\n• ምስባክ፦ መዝ. 45:5 «የወንዝ ፈሳሾች የእግዚአብሔርን ከተማ ደስ ያሰኛሉ፤ ልዑል ማደሪያውን ቀደሰ።»\n• ወንጌል፦ ማቴ. 1:21-25",
-    "wongel_zirzir": "📖 የዕለቱ ወንጌል ሰፊ አንድምታ፦ አማኑኤል ማለት 'እግዚአብሔር ከእኛ ጋር ነው' ማለት ነው። እርሱ ወደ እኛ የመጣው እኛን ወደ ሰማያዊው ክብር ለመመለስ ነው።",
-    "abew_timhirt": "💡 የአበው ትምህርት፦ «እግዚአብሔር ከእኛ ጋር ከሆነ የሚቃወመን ማን ነው? እርሱ በልባችን ሲኖር ፍርሃት ሁሉ ይወገዳል።» — ቅዱስ አትናቴዎስ",
-    "tseolot": "🙏 የጸሎት ማዕድ፦ አማኑኤል አምላካችን ሆይ! ዘወትር ከእኛ ጋር ሁን፣ በቸርነትህ አትለየን።"
-  },
-  "10_29": {
-      date: "ሰኔ 29 ቀን 2018 ዓ.ም",
-    "holiday": "የቅዱስ ላሊበላ ንጉሥ መታሰቢያ",
-    "sinksar": "በዚህች ዕለት ድንቅ የሆኑትን ውቅር አብያተ ክርስቲያናትን ያነጸው ጻድቁ ንጉሥ ቅዱስ ላሊበላ ዕረፍቱ የሚታሰብበት የክብር ዕለት ነው።",
-    "gitsawe": "📖 የዕለቱ ንባባት፦\n• ዲያቆን፦ 1ኛ ጢሞ. 6:17-21\n• ንፍቅ ዲያቆን፦ ያዕቆብ 2:1-9\n• ንፍቅ ካህን:- ሐዋ. ሥራ፦ ሐዋ. 13:23-31\n• ምስባክ፦ መዝ. 71:1 «አምላክ ሆይ፥ ፍርድህን ለንጉሥ ስጥ ጽድቅህንም ለንጉሥ ልጅ።»\n• ወንጌል፦ ማቴ. 25:31-46",
-    "wongel_zirzir": "📖 የዕለቱ ወንጌል ሰፊ አንድምታ፦ ንጉሥም ጻድቅም መሆን እንደሚቻል ያሳየን አባት ነው፤ በምድራዊ ሥልጣኑ ሰማያዊውን ክብር የገነባ ድንቅ መሪ ነው።",
-    "abew_timhirt": "💡 የአበው ትምህርት፦ «እውነተኛ መሪ ማለት በሥልጣኑ ሰዎችን የሚያገለግልና በትሕትና ለፈጣሪው የሚገዛ ሰው ነው።» — የአበው ምክር",
-    "tseolot": "🙏 የጸሎት ማዕድ፦ ለሀገራችን እግዚአብሔርን የሚፈሩና ሕዝብን በቅንነት የሚያገለግሉ መሪዎችን ስጥልን።"
-  },
-  "10_30": {
-      date: "ሰኔ 30 ቀን 2018 ዓ.ም",
-    "holiday": "የቅዱስ ዮሐንስ መጥምቅ መታሰቢያ",
-    "sinksar": "በዚህች ዕለት የነቢያት መደምደሚያና የጌታ መንገድ ጠራጊ የሆነው ቅዱስ ዮሐንስ መጥምቅ የተወለደበት ዓመታዊ ታላቅ በዓል ነው።",
-    "gitsawe": "📖 የዕለቱ ንባባት፦\n• ዲያቆን፦ ሐዋ. 13:24-32\n• ንፍቅ ዲያቆን፦ 1ኛ ካህን:- ዮሐ. 3:1-3\n• ሐዋ. ሥራ፦ ሐዋ. 19:1-7\n• ምስባክ፦ መዝ. 71:6 «እንደ ዝናብ በበግ ፀጉር ላይ ይወርዳል፥ በምድር ላይ እንደሚጠብጥ ጠብታ።»\n• ወንጌል፦ ሉቃስ 1:57-80",
-    "wongel_zirzir": "📖 የዕለቱ ወንጌል ሰፊ አንድምታ፦ ከሴቶች ከተወለዱት መካከል እንደ ዮሐንስ መጥምቅ ያለ አልተነሳም፤ እርሱ የእውነትና የንስሐ መምህር ነው።",
-    "abew_timhirt": "💡 የአበው ትምህርት፦ «ዮሐንስ መጥምቅ 'እርሱ ሊልቅ እኔ ግን ላንስ ያስፈልጋል' በማለት የትሕትናን ጥልቅ ምሥጢር አስተምሮናል።» — ቅዱስ ዮሐንስ አፈወርቅ",
-    "tseolot": "🙏 የጸሎት ማዕድ፦ በቅዱስ ዮሐንስ መጥምቅ ጸሎትና አማላጅነት የንስሐ ዕድሜን ስጠን።"
-  }
+        "holiday": "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል",
+        "sinksar": "በዚህች ዕለት ጌታችን መድኃኒታችን ኢየሱስ ክርስቶስ ሥጋን ለብሶ በቅድስት ድንግል ማርያም ማኅፀን ያደረበትን የምሥጢረ ሥጋዌ ታላቅ በዓል እናስባለን።",
+        "gitsawe": "📖 የዕለቱ ንባባት፦\n• ዲያቆን፦ ዕብ. 8:1-13\n• ንፍቅ ዲያቆን፦ 1ኛ ጴጥ. 2:1-10\n• ንፍቅ ካህን ሐዋ. ሥራ፦ ሐዋ. 3:12-26\n• ምስባክ፦ መዝ. 45:5 «የወንዝ ፈሳሾች የእግዚአብሔርን ከተማ ደስ ያሰኛሉ፤ ልዑል ማደሪያውን ቀደሰ።»\n• ወንጌል፦ ማቴ. 1:21-25",
+        "wongel_zirzir": "📖 የዕለቱ ወንጌል ሰፊ አንድምታ፦ አማኑኤል ማለት 'እግዚአብሔር ከእኛ ጋር ነው' ማለት ነው። እርሱ ወደ እኛ የመጣው እኛን ወደ ሰማያዊው ክብር ለመመለስ ነው።",
+        "abew_timhirt": "💡 የአበው ትምህርት፦ «እግዚአብሔር ከእኛ ጋር ከሆነ የሚቃወመን ማን ነው? እርሱ በልባችን ሲኖር ፍርሃት ሁሉ ይወገዳል።» — ቅዱስ አትናቴዎስ",
+        "tseolot": "🙏 የጸሎት ማዕድ፦ አማኑኤል አምላካችን ሆይ! ዘወትር ከእኛ ጋር ሁን፣ በቸርነትህ አትለየን።"
+    },
+    "10_29": {
+        date: "ሰኔ 29 ቀን 2018 ዓ.ም",
+        "holiday": "የቅዱስ ላሊበላ ንጉሥ መታሰቢያ",
+        "sinksar": "በዚህች ዕለት ድንቅ የሆኑትን ውቅር አብያተ ክርስቲያናትን ያነጸው ጻድቁ ንጉሥ ቅዱስ ላሊበላ ዕረፍቱ የሚታሰብበት የክብር ዕለት ነው።",
+        "gitsawe": "📖 የዕለቱ ንባባት፦\n• ዲያቆን፦ 1ኛ ጢሞ. 6:17-21\n• ንፍቅ ዲያቆን፦ ያዕቆብ 2:1-9\n• ንፍቅ ካህን:- ሐዋ. ሥራ፦ ሐዋ. 13:23-31\n• ምስባክ፦ መዝ. 71:1 «አምላክ ሆይ፥ ፍርድህን ለንጉሥ ስጥ ጽድቅህንም ለንጉሥ ልጅ።»\n• ወንጌል፦ ማቴ. 25:31-46",
+        "wongel_zirzir": "📖 የዕለቱ ወንጌል ሰፊ አንድምታ፦ ንጉሥም ጻድቅም መሆን እንደሚቻል ያሳየን አባት ነው፤ በምድራዊ ሥልጣኑ ሰማያዊውን ክብር የገነባ ድንቅ መሪ ነው።",
+        "abew_timhirt": "💡 የአበው ትምህርት፦ «እውነተኛ መሪ ማለት በሥልጣኑ ሰዎችን የሚያገለግልና በትሕትና ለፈጣሪው የሚገዛ ሰው ነው።» — የአበው ምክር",
+        "tseolot": "🙏 የጸሎት ማዕድ፦ ለሀገራችን እግዚአብሔርን የሚፈሩና ሕዝብን በቅንነት የሚያገለግሉ መሪዎችን ስጥልን።"
+    },
+    "10_30": {
+        date: "ሰኔ 30 ቀን 2018 ዓ.ም",
+        "holiday": "የቅዱስ ዮሐንስ መጥምቅ መታሰቢያ",
+        "sinksar": "በዚህች ዕለት የነቢያት መደምደሚያና የጌታ መንገድ ጠራጊ የሆነው ቅዱስ ዮሐንስ መጥምቅ የተወለደበት ዓመታዊ ታላቅ በዓል ነው።",
+        "gitsawe": "📖 የዕለቱ ንባባት፦\n• ዲያቆን፦ ሐዋ. 13:24-32\n• ንፍቅ ዲያቆን፦ 1ኛ ካህን:- ዮሐ. 3:1-3\n• ሐዋ. ሥራ፦ ሐዋ. 19:1-7\n• ምስባክ፦ መዝ. 71:6 «እንደ ዝናብ በበግ ፀጉር ላይ ይወርዳል፥ በምድር ላይ እንደሚጠብጥ ጠብታ።»\n• ወንጌል፦ ሉቃስ 1:57-80",
+        "wongel_zirzir": "📖 የዕለቱ ወንጌል ሰፊ አንድምታ፦ ከሴቶች ከተወለዱት መካከል እንደ ዮሐንስ መጥምቅ ያለ አልተነሳም፤ እርሱ የእውነትና የንስሐ መምህር ነው።",
+        "abew_timhirt": "💡 የአበው ትምህርት፦ «ዮሐንስ መጥምቅ 'እርሱ ሊልቅ እኔ ግን ላንስ ያስፈልጋል' በማለት የትሕትናን ጥልቅ ምሥጢር አስተምሮናል።» — ቅዱስ ዮሐንስ አፈወርቅ",
+        "tseolot": "🙏 የጸሎት ማዕድ፦ በቅዱስ ዮሐንስ መጥምቅ ጸሎትና አማላጅነት የንስሐ ዕድሜን ስጠን።"
+    }
 };
 
 // 4. የዕለቱን መረጃ በራስ-ሰር አውጥቶ አፕሊኬሽኑ ላይ የሚቀይር አሠራር
@@ -90,7 +90,9 @@ function updateDailyContent() {
     if (document.getElementById('holiday-title')) document.getElementById('holiday-title').innerText = todayData.holiday;
     if (document.getElementById('sinksar-text')) document.getElementById('sinksar-text').innerHTML = todayData.sinksar;
     if (document.getElementById('gitsawe-text')) document.getElementById('gitsawe-text').innerHTML = todayData.gitsawe;
-    if (document.getElementById('scripture-quote')) document.getElementById('scripture-quote').innerText = todayData.quote;
+    
+    // 🚨 እዚህ ጋ 'todayData.quote' የነበረው ወደ 'todayData.wongel_zirzir' ተስተካክሏል
+    if (document.getElementById('scripture-quote')) document.getElementById('scripture-quote').innerText = todayData.wongel_zirzir;
 }
 
 updateDailyContent();
@@ -190,7 +192,10 @@ if (mainTapBtn) {
             else if (points > 100) userBadge.innerText = "የበረከት ታጋይ";
         }
 
-        createFloatingPlusOne(e.clientX, e.clientY);
+        // 🚨 ለሞባይል ንክኪ እና ለኮምፒውተር ክሊክ ሁለቱንም እንዲቀበል ተስተካክሏል
+        const clickX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clickY = e.clientY || (e.touches && e.touches[0].clientY);
+        createFloatingPlusOne(clickX, clickY);
     });
     
     mainTapBtn.addEventListener('dblclick', () => {
@@ -216,16 +221,16 @@ if (cbeModalBtn) cbeModalBtn.addEventListener('click', copyCBE);
 if (teleBtn) teleBtn.addEventListener('click', copyTele);
 if (teleModalBtn) teleModalBtn.addEventListener('click', copyTele);
 
-// 11. 🔗 የሪፈራል ግብዣ ሊንክ (ሰዎችን ቀጥታ ወደ ቻናሉ የሚወስድ ስልት)
+// 11. 🔗 የሪፈራል ግብዣ ሊንክ
 if (shareBtn) {
     shareBtn.addEventListener('click', () => {
-        // ✨ በትዕምርተ ጥቅስ የተስተካከለ የቻናል መጋበዣ ሊንክ
         const inviteLink = "https://t.me/infomela06";
         const shareText = "ወደ ቤተሳይዳ መንፈሳዊ በጎ አድራጎት መድረክ ይግቡና የበረከት ተሳታፊ ይሁኑ! ✨";
+        const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`;
         
         if (tg) {
-            // የቴሌግራም share ሊንክ አጠቃቀም ሥርዓት
-            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`);
+            // 🚨 ይበልጥ አስተማማኝ በሆነው openLink ተተክቷል
+            tg.openLink(telegramShareUrl);
         } else {
             navigator.clipboard.writeText(inviteLink);
             alert("የመጋበዣ የቻናል ሊንክዎ ኮፒ ሆኗል፦ " + inviteLink);
@@ -240,6 +245,7 @@ if (closeModal) {
 }
 
 function createFloatingPlusOne(x, y) {
+    if (!x || !y) return; // ቦታው ካልታወቀ እንዳይሠራ መከላከያ
     const el = document.createElement('div');
     el.className = 'floating-plus-one';
     el.innerText = '+1 🪙';
