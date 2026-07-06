@@ -85,27 +85,6 @@ def get_daily_blessing():
     # የኢትዮጵያ ወር ስም በቁጥር መለየት (ለቀን ጽሑፍ ማሳያ)
     eth_month_name = "ሰኔ" if eth_month == 10 else "ሐምሌ" if eth_month == 11 else "ግንቦት"
     
-    # የዕለቱን ዳታ ከ JSON መፈለግ
-    day_data = calendar_data.get(key)
-    
-    if not day_data:
-        # ዳታው በ JSON ውስጥ ከጠፋ ብቻ ወደ 10-28 ወይም 10_28 መከላከያ ይሄዳል
-        fallback_key = "10_28" if "-" in key else "10_28"
-        day_data = calendar_data.get(fallback_key, {
-            "holiday": "የዕለቱ ቅዱስ በዓል",
-            "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ እናስባለን።",
-            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን ይከታተሉ።",
-            "wongel": "የወንጌልን ሰፊ ትምህርት በሕይወታችን እንተርጉመው።"
-        })
-    
-    return jsonify({
-        "ethiopian_date": f"{eth_month_name} {eth_day} ቀን 2018 ዓ.ም",
-        "holiday_name": day_data.get("holiday", "የዕለቱ መንፈሳዊ በዓል"),
-        "image_url": "mary.jpg",
-        "sinksar": day_data.get("sinksar", ""),
-        "gitsawe": day_data.get("gitsawe", ""),
-        "quote": day_data.get("wongel", day_data.get("wongel_zirzir", ""))
-    })
 
 # 🔔 በየ 30 ደቂቃው ይዘቱን እየቀያየረ ወደ ቻናል የሚልክ ዋናው ክሮን ጆብ
 @app.route('/api/cron-reminder', methods=['GET'])
