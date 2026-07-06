@@ -45,7 +45,7 @@ def load_calendar_data():
                 continue
     return {}
 
-# 💡 የአበው ምክሮች ስብስብ (ከፈንክሽን ውጪ ተስተካክሎ የተቀመጠ)
+# 💡 የአበው ምክሮች ስብስብ
 GENERAL_ADVICE = [
     "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ",
     "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅ።” — የአበው ምክር",
@@ -72,24 +72,62 @@ def webhook():
         send_message(chat_id, welcome_text, reply_markup)
     return "OK", 200
 
+# 1️⃣ ለሚኒ አፑ ዳታ ማቅረቢያ መንገድ (Route)
 @app.route('/api/daily-blessing', methods=['GET'])
 def get_daily_blessing():
     eth_month, eth_day = get_ethiopian_date()
     calendar_data = load_calendar_data()
     
-    # 🚨 ማሳሰቢያ፦ የ JSON ፋይልህ ቁልፍ በሰረዝ (10_29) ከሆነ ይሄን ተጠቀም፦
+    # የ JSON ፋይልህ ቁልፍ አወቃቀር (10_28 ወይም 10_28) መሆኑን አረጋግጥ
     key = f"{eth_month}_{eth_day}" 
-    # የ JSON ፋይልህ ቁልፍ በታችኛው ሰረዝ (10-29) ከሆነ ግን ከታች ያለውን መስመር ክፈተው፦
-    # key = f"{eth_month}_{eth_day}"
     
-    # የኢትዮጵያ ወር ስም በቁጥር መለየት (ለቀን ጽሑፍ ማሳያ)
     eth_month_name = "ሰኔ" if eth_month == 10 else "ሐምሌ" if eth_month == 11 else "ግንቦት"
     
-        
-    # 🔄 በየ 30 ደቂቃው መልእክቱ እንዲቀያየር በዘፈቀደ (Random) አንዱን መምረጥ
-    content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
+    day_data = calendar_data.get(key)
+    if not day_data:
+        # ዳታው በቁልፉ ከጠፋ ወደ ነባሪ መከላከያ ይሄዳል
+        day_data = calendar_data.get("10_28", calendar_data.get("10_28", {
+            "holiday": "የዕለቱ ቅዱስ በዓል",
+            "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ እናስባለን።",
+            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን ይከታተሉ።",
+            "wongel": "የወንጌልን ሰፊ ትምህርት በሕይወታችን እንተርጉመው።"
+        }))
     
-    base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ ሰኔ {eth_day} ቀን</b>\n\n"
+    return jsonify({
+        "ethiopian_date": f"{eth_month_name} {eth_day} ቀን 2018 ዓ.ም",
+        "holiday_name": day_data.get("holiday", "የዕለቱ መንፈሳዊ በዓል"),
+        "image_url": "mary.jpg",
+        "sinksar": day_data.get("sinksar", ""),
+        "gitsawe": day_data.get("gitsawe", ""),
+        "quote": day_data.get("wongel", day_data.get("wongel_zirzir", ""))
+    })
+
+# 2️⃣ በየ 30 ደቂቃው ወደ ቻናል መልእክት መላኪያ ክሮን ጆብ (Cron Job Route)
+@app.route('/api/cron-reminder', methods=['GET'])
+def cron_reminder():
+    if not CHAT_ID:
+        return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
+        
+    eth_month, eth_day = get_ethiopian_date()
+    calendar_data = load_calendar_data()
+    key = f"{eth_month}_{eth_day}"
+    
+    eth_month_name = "ሰኔ" if eth_month == 10 else "ሐምሌ" if eth_month == 11 else "ግንቦት"
+    
+    day_data = calendar_data.get(key)
+    if not day_data:
+        day_data = calendar_data.get("10_28", calendar_data.get("10_28", {
+            "holiday": "የዕለቱ መንፈሳዊ በዓል",
+            "sinksar": "የዕለቱን ስንክሳር በጸሎት እናስባለን።",
+            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።",
+            "wongel": "የወንጌል ሰፊ አንድምታ።",
+            "terguame": "ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።",
+            "mazmur": "ያማሩ መንፈሳዊ መዝሙራት።",
+            "abew": GENERAL_ADVICE
+        }))
+        
+    content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
+    base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ {eth_month_name} {eth_day} ቀን</b>\n\n"
     
     if content_type == "sinksar_gitsawe":
         body = (
@@ -98,12 +136,11 @@ def get_daily_blessing():
         )
     elif content_type == "wongel_terguame":
         body = (
-            f"📖 <b>የዕለቱ ወንጌል፦</b>\n{day_data.get('wongel', 'የለም')}\n\n"
-            f"✨ <b>ትርጓሜ፦</b>\n{day_data.get('terguame', 'የለም')}"
+            f"📖 <b>የዕለቱ ወንጌል፦</b>\n{day_data.get('wongel', day_data.get('wongel_zirzir', 'የለም'))}\n\n"
+            f"✨ <b>ትርጓሜ፦</b>\n{day_data.get('terguame', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።')}"
         )
     else:
         abew_list = day_data.get('abew', GENERAL_ADVICE)
-        # አቤው ሊስት ስትሪንግ ከሆነ ወደ ሊስት መቀየር
         if isinstance(abew_list, str): abew_list = [abew_list]
         
         body = (
@@ -113,7 +150,6 @@ def get_daily_blessing():
         
     formatted_msg = base_header + body + "\n\n🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
     
-    # 🔗 ጎልቶ የሚታይ የመግቢያ ቁልፍ (Button)
     reply_markup = {
         "inline_keyboard": [[{
             "text": "💎 ማንም ሳይጸጸት በደስታ ይስጥ ➔ [ ወደ ቦቱ ግባ ] 💎",
