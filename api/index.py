@@ -30,19 +30,18 @@ def get_ethiopian_date():
         eth_day = utc_now.day
     return eth_month, eth_day
 
-# 📁 በ Repository ውስጥ ያለውን calendar_data.json ፋይል በቀጥታ የሚያነብ ፋንክሽን
+# 📁 calendar_data.json በ api ፎልደር ውስጥ ሲሆን ፋይሉን በቀጥታ የሚያነብ
 def load_calendar_data():
-    possible_paths = [
-        os.path.join(os.path.dirname(__file__), '..', 'calendar_data.json'),
-        'calendar_data.json'
-    ]
-    for path in possible_paths:
-        if os.path.exists(path):
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-            except:
-                continue
+    # ኮዱ ካለበት (api ፎልደር) ውስጥ calendar_data.json ን በቀጥታ ይፈልጋል
+    path = os.path.join(os.path.dirname(__file__), 'calendar_data.json')
+    
+    if os.path.exists(path):
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"የጄሰን ስህተት፦ {e}")
+            return {}
     return {}
 
 # 💡 የአበው ምክሮች ስብስብ (ከ JSON ፋይሉ ዳታ ከጠፋ እንደ መከላከያ የሚሆን)
