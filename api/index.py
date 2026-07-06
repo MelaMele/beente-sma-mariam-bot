@@ -85,28 +85,6 @@ def get_daily_blessing():
     # የኢትዮጵያ ወር ስም በቁጥር መለየት (ለቀን ጽሑፍ ማሳያ)
     eth_month_name = "ሰኔ" if eth_month == 10 else "ሐምሌ" if eth_month == 11 else "ግንቦት"
     
-
-# 🔔 በየ 30 ደቂቃው ይዘቱን እየቀያየረ ወደ ቻናል የሚልክ ዋናው ክሮን ጆብ
-@app.route('/api/cron-reminder', methods=['GET'])
-def cron_reminder():
-    if not CHAT_ID:
-        return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
-        
-    eth_month, eth_day = get_ethiopian_date()
-    calendar_data = load_calendar_data()
-    key = f"{eth_month}-{eth_day}"
-    
-    day_data = calendar_data.get(key)
-    if not day_data:
-        day_data = {
-            "holiday": "የዕለቱ መንፈሳዊ በዓል",
-            "sinksar": "የዕለቱን ስንክሳር በጸሎት እናስባለን።",
-            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።",
-            "wongel": "የወንጌል ሰፊ አንድምታ።",
-            "terguame": "ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።",
-            "mazmur": "ያማሩ መንፈሳዊ መዝሙራት።",
-            "abew": GENERAL_ADVICE
-        }
         
     # 🔄 በየ 30 ደቂቃው መልእክቱ እንዲቀያየር በዘፈቀደ (Random) አንዱን መምረጥ
     content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
