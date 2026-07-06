@@ -77,9 +77,9 @@ def get_daily_blessing():
     eth_month, eth_day = get_ethiopian_date()
     calendar_data = load_calendar_data()
     
-    # 🚨 ማሳሰቢያ፦ የ JSON ፋይልህ ቁልፍ በሰረዝ (10-29) ከሆነ ይሄን ተጠቀም፦
-    key = f"{eth_month}-{eth_day}" 
-    # የ JSON ፋይልህ ቁልፍ በታችኛው ሰረዝ (10_29) ከሆነ ግን ከታች ያለውን መስመር ክፈተው፦
+    # 🚨 ማሳሰቢያ፦ የ JSON ፋይልህ ቁልፍ በሰረዝ (10_29) ከሆነ ይሄን ተጠቀም፦
+    key = f"{eth_month}_{eth_day}" 
+    # የ JSON ፋይልህ ቁልፍ በታችኛው ሰረዝ (10-29) ከሆነ ግን ከታች ያለውን መስመር ክፈተው፦
     # key = f"{eth_month}_{eth_day}"
     
     # የኢትዮጵያ ወር ስም በቁጥር መለየት (ለቀን ጽሑፍ ማሳያ)
