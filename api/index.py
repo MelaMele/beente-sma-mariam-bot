@@ -34,19 +34,31 @@ def get_ethiopian_date():
 
 # 📁 የ JSON ፋይሉን በየትኛውም ማውጫ (Path) ቢሆን ፈልጎ የሚያነብ ጠንካራ ተግባር
 def load_calendar_data():
-    possible_paths = [
-        os.path.join(os.path.dirname(__file__), 'calendar_data.json'), # ከኮዱ ጎን ካለ
-        os.path.join(os.getcwd(), 'api', 'calendar_data.json'),       # በ api ፎልደር ውስጥ ከሆነ
-        os.path.join(os.getcwd(), 'calendar_data.json')               # በ ዋናው (Root) ማውጫ ላይ ከሆነ
-    ]
+    # ኮዱ ራሱ ካለበት የ 'api' ፎልደር አንጻር ፍጹም አድራሻውን (Absolute Path) መስራት
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(current_dir, 'calendar_data.json')
     
-    for path in possible_paths:
-        if os.path.exists(path):
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-            except Exception as e:
-                print(f"የጄሰን ፋይል ንባብ ስህተት በ {path} ላይ፦ {e}")
+    print(f"ፋይሉን እዚህ ቦታ ላይ እየፈለግኩት ነው፦ {json_path}") # ለ Vercel Log ማያያዣ
+    
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"የጄሰን ፋይል መክፈት ስህተት፦ {e}")
+            return {}
+            
+    # ካልተገኘ እንደ ሁለተኛ አማራጭ ከ Root ማውጫ አንጻር መፈለግ
+    fallback_path = os.path.join(os.getcwd(), 'api', 'calendar_data.json')
+    if os.path.exists(fallback_path):
+        try:
+            with open(fallback_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"የጄሰን ፋይል መክፈት ስህተት (Fallback)፦ {e}")
+            return {}
+
+    print("⚠️ ፋይሉ በየትኛውም መንገድ ሊገኝ አልቻለም!")
     return {}
 
 # 💡 የአበው ምክሮች ስብስብ (Fallback ዳታ)
