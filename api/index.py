@@ -1,3 +1,4 @@
+ቼክ አድርግልኝ
 import os
 import random
 import json
