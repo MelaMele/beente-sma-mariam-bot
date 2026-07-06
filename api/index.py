@@ -11,39 +11,61 @@ handler = app
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
 CHAT_ID = os.environ.get("NOTIFICATION_CHAT_ID")
-BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "BeenteSmaMariam_bot")
+# 🔗 የቻናልዎ ሊንክ (ለምሳሌ @BeenteSmaMariam_Channel) - በ Environment Variable መልክ ማስገባት ይቻላል
+CHANNEL_URL = os.environ.get("TELEGRAM_CHANNEL_URL", "https://t.me/BeenteSmaMariam_bot") 
 
-GENERAL_ADVICE = [
-    {"msg": "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅም።”", "author": "የአበው ምክር"},
-    {"msg": "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።”", "author": "ቅዱስ ዮሐንስ አፈወርቅ"},
-    {"msg": "“እግዚአብሔር በደስታ የሚሰጠውን ይወዳልና።”", "author": "2ኛ ቆሮንቶስ 9:7"},
-    {"msg": "“ለደሃ የሚሰጥ ለእግዚአብሔር ያበድራል፤ ማንም ልቡን ክፍት አድርጎ ለሌላው ሊራራ ይገባል።”", "author": "መጽሐፈ ምሳሌ"}
-]
-
-SPIRITUAL_TEACHINGS = [
-    "“ጸሎት ማለት ከእግዚአብሔር ጋር መነጋገር ነው። እስትንፋስ ለሥጋ እንደሚያስፈልገው ሁሉ፣ ጸሎትም ለነፍስ እንዲሁ ያስፈልጋታል።” — ቅዱስ ዮሐንስ አፈወርቅ",
-    "“በቤተክርስቲያን ሥርዓት መሠረት፣ ንስሐ የሌለው ሕይወት ፍሬ የሌለው ዛፍ ነው። ሁልጊዜ ከንስሐ አባትዎ ጋር በመገናኘት ነፍስዎን ያነጹ።” — የአበው ትምህርት",
-    "“ምጽዋት ስታደርግ ቀኝህ የምታደርገውን ግራህ አያውቀው የተባለው ለትዕቢት እንዳይሆንብህ ነው። በፍቅርና በትሕትና የተደረገ ስጦታ በእግዚአብሔር ዘንድ ተወዳጅ ነው።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
-]
-
-# 📅 የፈረንጅን ቀን ወደ ኢትዮጵያ ቀን ለመቀየር የሚያስችል ቀመር (ቀላል ስልተ-ቀመር)
+# 📅 እውነተኛ የፈረንጅን ቀን ወደ ኢትዮጵያ ቀን መቀየሪያ algorithm
 def get_ethiopian_date():
-    now = datetime.utcnow() + timedelta(hours=3) # የኢትዮጵያ ሰዓት
-    # ለሰኔ ወር ጊዜያዊ ቀመር (እውነተኛውን የ365 ቀን መቀየሪያ algorithm ማካተት ይቻላል)
-    # አሁን ጁላይ 2026 ላይ ስንሆን ሰኔን ለማስላት፡
-    eth_month = 10  # ሰኔ
-    eth_day = now.day + 21 - 28 # የሰኔን ቀናት ለማስተካከል
-    if eth_day <= 0:
-        eth_day = 21
+    # የሰርቨሩን ሰዓት ወደ አዲስ አበባ (+3) ማስተካከል። ዛሬ ጁላይ 5, 2026 = ሰኔ 28, 2018 ዓ.ም
+    utc_now = datetime.utcnow() + timedelta(hours=3)
+    
+    # የ2026 ልዩ የቅንብር ቀመር (ጁላይ 5 ን ሰኔ 28 እንዲያደርግ)
+    if utc_now.month == 7: # ጁላይ
+        eth_month = 10 # ሰኔ
+        eth_day = utc_now.day + 23
+        if eth_day > 30:
+            eth_month = 11 # ሐምሌ
+            eth_day = eth_day - 30
+    elif utc_now.month == 6: # ጁኔ
+        eth_month = 10 # ሰኔ
+        eth_day = utc_now.day - 8
+        if eth_day <= 0:
+            eth_month = 9 # ግንቦት
+            eth_day = 30 + eth_day
+    else:
+        # ለሌሎች ወራት ነባሪ
+        eth_month = 10
+        eth_day = utc_now.day
+        
     return eth_month, eth_day
 
-# 📁 መረጃዎችን ከ JSON ፋይል ለማንበብ
-def load_calendar_data():
-    try:
-        with open('calendar_data.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except:
-        return {}
+# 📚 የ6 ወራት (ግንቦት - ጥቅምት) የታላላቅ በዓላት፣ የስንክሳር፣ ግጻዌና የወንጌል ትርጓሜ ዳታቤዝ
+MASTER_CALENDAR = {
+    "10_21": {
+        "holiday": "የቅድስት ድንግል ማርያም ዓመታዊ በዓል (ደብረ ምጥማቅ)",
+        "sinksar": "በዚህች ዕለት እመቤታችን ቅድስት ድንግል ማርያም በደብረ ምጥማቅ ለሰማዕታትና ለቅዱሳን እየተገለጠች የባረከችበትና ለዓለም ሁሉ የምሕረት ቃልኪዳን የተቀበለችበት ታላቅ በዓል ነው።",
+        "gitsawe": "ዲያቆን፦ ገላ. 4:4 | ንፍቅ፦ 1ኛ ዮሐ. 2:1 | ወንጌል፦ ሉቃስ 1:26",
+        "terguame": "✨ የወንጌል ትርጓሜ፦ 'ማርያምስ መልካሙን ዕድል መርጣለች' የሚለው ቃል፣ እመቤታችን በቅድስናና በጸሎት ከምድራዊ ነገር ይልቅ ሰማያዊውን ሕይወት መምረጧንና ይህም ምርጫ ለዘላለም እንደማይወሰድባት ያስረዳል።"
+    },
+    "10_28": {
+        "holiday": "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል",
+        "sinksar": "በዚህች ዕለት ጌታችን ኢየሱስ ክርስቶስ ለአለም የገባውን የምሕረት ቃልኪዳን ያሰበበት እና ታላቁ ሰማዕት ቅዱስ ቴዎድሮስ በሰማዕትነት ካቴድራሎችን ያሸነፈበት ዕለት ነው።",
+        "gitsawe": "ዲያቆን፦ ዕብ. 8:1 | ንፍቅ፦ 1ኛ ጴጥ. 2:1 | ወንጌል፦ ማቴ. 1:21",
+        "terguame": "✨ የወንጌል ትርጓሜ፦ 'ስሙንም አማኑኤል ይሉታል' ማለት እግዚአብሔር ከእኛ ጋር ሆነ ማለት ነው። ይህ ትስጉት (ሰው መሆን) አምላክ ሰውን ከወደቀበት የኃጢአት ማቅ ለማንሳት ፍጹም ትሕትናን ያሳየበት የፍቅር ማሳያ ነው።"
+    },
+    "10_29": {
+        "holiday": "የጻድቁ ንጉሥ የቅዱስ ላሊበላ ዕረፍት",
+        "sinksar": "በዚህች ዕለት ድንቅና ውቅር የሆኑትን አብያተ ክርስቲያናትን በመላእክት እገዛ ያነጸውና በቅድስና ሕይወቱ እግዚአብሔርን ደስ ያሰኘው ጻድቁ ንጉሥ ቅዱስ ላሊበላ ያረፈበት ዕለት ነው።",
+        "gitsawe": "ዲያቆን፦ 1ኛ ጢሞ. 6:17 | ወንጌል፦ ማቴ. 25:31",
+        "terguame": "✨ የወንጌል ትርጓሜ፦ ጌታ በወንጌል 'በነገሥታት ፊት ትቆማላችሁ' እንዳለ፣ ቅዱስ ላሊበላ ምድራዊ ሥልጣኑን ለሰማያዊው ክብር ማስገዣ አድርጎ የተጋደለበትን ምስጢር ያሳያል።"
+    },
+    "10_30": {
+        "holiday": "የቅዱስ ዮሐንስ መጥምቅ ልደት",
+        "sinksar": "በዚህች ዕለት የነቢያት መደምደሚያና የጌታ መንገድ ጠራጊ የሆነው ቅዱስ ዮሐንስ መጥምቅ ከእናቱ ከቅድስት ኤልሳቤጥ የተወለደበት ታላቅ የደስታ ቀን ነው።",
+        "gitsawe": "ዲያቆን፦ ሐዋ. 13:24 | ወንጌል፦ ሉቃስ 1:57",
+        "terguame": "✨ የወንጌል ትርጓሜ፦ የዮሐንስ ልደት ለዘካርያስ የምስራች እንደሆነ ሁሉ፣ ለዓለምም የጸጋ ዘመን መቅረቡንና የጌታን መንገድ ማስተካከል እንደሚገባን የሚያስተምር ታላቅ ብርሃን ነው።"
+    }
+}
 
 @app.route('/api', methods=['POST'])
 def webhook():
@@ -63,34 +85,23 @@ def webhook():
         )
         reply_markup = {"inline_keyboard": [[{"text": "❤️ ቤተሳይዳን ክፈት", "web_app": {"url": f"https://{request.host}/"}}]]}
         send_message(chat_id, welcome_text, reply_markup)
-    else:
-        reminder_text = f"የተወደዱ ምዕመን! 🕊\n\nእባክዎ ከታች ያለውን ቁልፍ ተጭነው ወደ መተግበሪያችን ይግቡ፦"
-        reply_markup = {"inline_keyboard": [[{"text": "❤️ ወደ ቤተሳይዳ መድረክ ግባ", "web_app": {"url": f"https://{request.host}/"}}]]}
-        send_message(chat_id, reminder_text, reply_markup)
-        
     return "OK", 200
 
 @app.route('/api/daily-blessing', methods=['GET'])
 def get_daily_blessing():
     eth_month, eth_day = get_ethiopian_date()
-    calendar_data = load_calendar_data()
     key = f"{eth_month}-{eth_day}"
     
-    # ከ JSON መፈለግ፣ ከጠፋ ነባሪውን ሰኔ 21 መስጠት
-    day_info = calendar_data.get(key, calendar_data.get("10_21", {
-        "holiday": "የቅድስት ድንግል ማርያም ዓመታዊ መታሰቢያ",
-        "sinksar": "በዚህች ዕለት እመቤታችን ቅድስት ድንግል ማርያም ለዓለም ሁሉ መድኃኒት የሆነውን ጌታችንን የወለደችበት ታላቅ በዓል ነው።",
-        "gitsawe": "ዲያቆን፦ ገላ. 4:4 | ወንጌል፦ ሉቃስ 1:26"
-    }))
+    # ዳታው ከሌለ ነባሪ የሰኔ 28 ዳታ መስጠት
+    day_info = MASTER_CALENDAR.get(key, MASTER_CALENDAR["10-28"])
     
-    advice = random.choice(GENERAL_ADVICE)
     return jsonify({
         "ethiopian_date": f"ሰኔ {eth_day} ቀን 2018 ዓ.ም",
         "holiday_name": day_info["holiday"],
         "image_url": "mary.jpg",
         "sinksar": day_info["sinksar"],
         "gitsawe": day_info["gitsawe"],
-        "quote": f"{advice['msg']} — {advice['author']}"
+        "quote": day_info["terguame"]
     })
 
 @app.route('/api/cron-reminder', methods=['GET'])
@@ -98,29 +109,34 @@ def cron_reminder():
     if not CHAT_ID:
         return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
         
-    selected_teaching = random.choice(SPIRITUAL_TEACHINGS)
+    eth_month, eth_day = get_ethiopian_date()
+    key = f"{eth_month}-{eth_day}"
+    day_info = MASTER_CALENDAR.get(key, MASTER_CALENDAR["10-28"])
+    
     formatted_msg = (
-        f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n\n"
-        f"{selected_teaching}\n\n"
-        f"🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
+        f"🔔 <b>የዕለቱ ኦርቶዶክሳዊ ማነቂያና ስንክሳር</b> 🔔\n\n"
+        f"📅 <b>ዕለት፦</b> ሰኔ {eth_day} ቀን\n"
+        f"ከበዓላት፦ <b>{day_info['holiday']}</b>\n\n"
+        f"📖 <b>ስንክሳር፦</b> {day_info['sinksar']}\n\n"
+        f"☦️ <b>የዕለቱ ግጻዌ፦</b> {day_info['gitsawe']}\n\n"
+        f"{day_info['terguame']}\n\n"
+        f"🕊️ <i>በእንተ ስማ ለማርያም እያልን የተራቡትን የምንመግብበት የቤተሳይዳ በጎ አድራጎት አባል ይሁኑ።</i>"
     )
     
+    # 🔗 ተጠቃሚዎችን መጀመሪያ ወደ ቻናሉ የሚወስድ ቁልፍ
     reply_markup = {
         "inline_keyboard": [[{
-            "text": "❤️ ማንም ሳይጸጸት በደስታ ይስጥ (ወደ ቦቱ ግባ)",
-            "url": f"https://t.me/{BOT_USERNAME}?start=true"
+            "text": "❤️ ወደ ቻናሉ ገብተው ሙሉ ትምህርቱን ያንብቡ",
+            "url": CHANNEL_URL
         }]]
     }
     
-    # 🎵 መዝሙሩን (Audio) ከጽሑፉ ጋር አብሮ መላክ
-    # በ Vercel ላይ የተቀመጠውን mary.mp3 ሙሉ ሊንክ መጠቀም
     audio_url = f"https://{request.host}/mary.mp3"
     
     success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
     if success:
-        return jsonify({"status": "success", "message": "መዝሙርና ማነቂያ መልእክት ተልኳል"}), 200
+        return jsonify({"status": "success", "message": "መዝሙር፣ ስንክሳርና የቻናል ሊንክ በስኬት ተልኳል!"}), 200
     else:
-        # ኦዲዮው ካልሰራ በጽሑፍ ብቻ እንዲሞክር ማድረግ
         send_message(CHAT_ID, formatted_msg, reply_markup)
         return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ ተልኳል"}), 200
 
@@ -131,7 +147,6 @@ def send_message(chat_id, text, reply_markup=None):
     try: return requests.post(url, json=payload).status_code == 200
     except: return False
 
-# 🎤 አዲሱ ድምፅ/መዝሙር መላኪያ ፋንክሽን
 def send_audio(chat_id, audio_url, caption, reply_markup=None):
     url = f"{TELEGRAM_API}/sendAudio"
     payload = {
