@@ -133,12 +133,20 @@ def cron_reminder():
         send_message(CHAT_ID, formatted_msg, reply_markup)
         return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ ተልኳል"}), 200
 
-def send_message(chat_id, text, reply_markup=None):
-    url = f"{TELEGRAM_API}/sendMessage"
-    payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
-    if reply_markup: payload["reply_markup"] = reply_markup
-    try: return requests.post(url, json=payload).status_code == 200
-    except: return False
+def format_daily_message(day_data):
+    message = (
+        f"📅 **ዕለታዊ የቤተክርስቲያን ዓውደ አዋጅ**\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"🌟 **የዕለቱ በዓል፦** {day_data['holiday']}\n\n"
+        f"📜 **ስንክሳር (የቅዱሳን ታሪክ)፦**\n{day_data['sinksar']}\n\n"
+        f"{day_data['gitsawe']}\n\n"
+        f"📖 **የዕለቱ ሰፊ ትምህርት፦**\n{day_data['wongel_zirzir']}\n\n"
+        f"💡 **የአበው ምክር (ትምህርት)፦**\n{day_data['abew_timhirt']}\n\n"
+        f"🙏 **የጸሎት ማዕድ፦**\n{day_data['tseolot']}\n\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"🔔 ለሌሎች ክርስቲያን ወንድሞችና እህቶች ያጋሩ!"
+    )
+    return message
 
 def send_audio(chat_id, audio_url, caption, reply_markup=None):
     url = f"{TELEGRAM_API}/sendAudio"
