@@ -7,64 +7,43 @@ import requests
 
 app = Flask(__name__)
 handler = app 
-application = app
 
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{TOKEN}"
 CHAT_ID = os.environ.get("NOTIFICATION_CHAT_ID")
-
-CHANNEL_USERNAME = "infomela06" 
-CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
-
 BOT_USERNAME = os.environ.get("TELEGRAM_BOT_USERNAME", "BeenteSmaMariam_bot")
-BOT_URL = f"https://t.me/{BOT_USERNAME}?start=true"
 
-# 📅 የፈረንጆቹን ጁላይ ወር ቀኖች በቀጥታ ወደ እውነተኛው የሰኔ/ሐምሌ ቀን መmapping ማድረጊያ
-def get_exact_ethiopian_info():
-    utc_now = datetime.utcnow() + timedelta(hours=3) # የአዲስ አበባ ሰዓት
-    current_day = utc_now.day
-    current_month = utc_now.month
-    
-    if current_month == 7:
-        if current_day <= 7:
-            eth_month = 10
-            eth_day = current_day + 23  # ጁላይ 6 = ሰኔ 29
-            eth_month_name = "ሰኔ"
-        else:
-            eth_month = 11
-            eth_day = current_day - 7   # ጁላይ 8 = ሐምሌ 1
-            eth_month_name = "ሐምሌ"
-    elif current_month == 6:
-        eth_month = 10
-        eth_day = current_day - 8
-        eth_month_name = "ሰኔ"
-    else:
-        eth_month = 10
-        eth_day = 29
-        eth_month_name = "ሰኔ"
-        
-    return eth_month, eth_day, eth_month_name
-
-def load_calendar_data():
-    possible_paths = [
-        os.path.join(os.path.dirname(__file__), '..', 'calendar_data.json'),
-        'calendar_data.json'
-    ]
-    for path in possible_paths:
-        if os.path.exists(path):
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-            except:
-                continue
-    return {}
-
-# 💡 ተጨማሪ የአበው ምክሮች ስብስብ (ዳታው በ JSON ውስጥ ከጠፋ ለመጠባበቂያ)
 GENERAL_ADVICE = [
-    "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ",
-    "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅ።” — የአበው ምክር",
-    "“ምጽዋት ስታደርግ ቀኝህ የምታደርገውን ግራህ አያውቀው የተባለው ለትዕቢት እንዳይሆንብህ ነው።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
+    {"msg": "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅም።”", "author": "የአበው ምክር"},
+    {"msg": "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።”", "author": "ቅዱስ ዮሐንስ አፈወርቅ"},
+    {"msg": "“እግዚአብሔር በደስታ የሚሰጠውን ይወዳልና።”", "author": "2ኛ ቆሮንቶስ 9:7"},
+    {"msg": "“ለደሃ የሚሰጥ ለእግዚአብሔር ያበድራል፤ ማንም ልቡን ክፍት አድርጎ ለሌላው ሊራራ ይገባል።”", "author": "መጽሐፈ ምሳሌ"}
 ]
+
+SPIRITUAL_TEACHINGS = [
+    "“ጸሎት ማለት ከእግዚአብሔር ጋር መነጋገር ነው። እስትንፋስ ለሥጋ እንደሚያስፈልገው ሁሉ፣ ጸሎትም ለነፍስ እንዲሁ ያስፈልጋታል።” — ቅዱስ ዮሐንስ አፈወርቅ",
+    "“በቤተክርስቲያን ሥርዓት መሠረት፣ ንስሐ የሌለው ሕይወት ፍሬ የሌለው ዛፍ ነው። ሁልጊዜ ከንስሐ አባትዎ ጋር በመገናኘት ነፍስዎን ያነጹ።” — የአበው ትምህርት",
+    "“ምጽዋት ስታደርግ ቀኝህ የምታደርገውን ግራህ አያውቀው የተባለው ለትዕቢት እንዳይሆንብህ ነው። በፍቅርና በትሕትና የተደረገ ስጦታ በእግዚአብሔር ዘንድ ተወዳጅ ነው።” — ቅዱስ ባስልዮስ ዘቂሳሪያ"
+]
+
+# 📅 የፈረንጅን ቀን ወደ ኢትዮጵያ ቀን ለመቀየር የሚያስችል ቀመር (ቀላል ስልተ-ቀመር)
+def get_ethiopian_date():
+    now = datetime.utcnow() + timedelta(hours=3) # የኢትዮጵያ ሰዓት
+    # ለሰኔ ወር ጊዜያዊ ቀመር (እውነተኛውን የ365 ቀን መቀየሪያ algorithm ማካተት ይቻላል)
+    # አሁን ጁላይ 2026 ላይ ስንሆን ሰኔን ለማስላት፡
+    eth_month = 10  # ሰኔ
+    eth_day = now.day + 21 - 28 # የሰኔን ቀናት ለማስተካከል
+    if eth_day <= 0:
+        eth_day = 21
+    return eth_month, eth_day
+
+# 📁 መረጃዎችን ከ JSON ፋይል ለማንበብ
+def load_calendar_data():
+    try:
+        with open('calendar_data.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return {}
 
 @app.route('/api', methods=['POST'])
 def webhook():
@@ -79,119 +58,71 @@ def webhook():
     if text.startswith("/start"):
         welcome_text = (
             f"እንኳን ወደ <b>ቤተሳይዳ መንፈሳዊ በጎ አድራጎት</b> መድረክ በደህና መጡ! 🎉\n\n"
-            f"የዕለቱን ሙሉ ስንክሳር፣ ግጻዌ፣ የወንጌል ትርጓሜና ያማሩ መንፈሳዊ መዝሙሮችን በሰፊው ለማግኘትና ለመማር "
-            f"እባክዎ መጀመሪያ ይፋዊ ቻናላችንን ይቀላቀሉ፦"
+            f"ይህ መድረክ 'በእንተ ስማ ለማርያም' እያልን የተቸገሩትን የምንረዳበት የምሕረት ቤት ነው።\n"
+            f"እባክዎ ከታች ያለውን ቁልፍ ተጭነው መድረኩን ይክፈቱ፦"
         )
-        reply_markup = {
-            "inline_keyboard": [[
-                {"text": "📢 ቻናላችንን ይቀላቀሉ", "url": CHANNEL_URL}
-            ]]
-        }
+        reply_markup = {"inline_keyboard": [[{"text": "❤️ ቤተሳይዳን ክፈት", "web_app": {"url": f"https://{request.host}/"}}]]}
         send_message(chat_id, welcome_text, reply_markup)
+    else:
+        reminder_text = f"የተወደዱ ምዕመን! 🕊\n\nእባክዎ ከታች ያለውን ቁልፍ ተጭነው ወደ መተግበሪያችን ይግቡ፦"
+        reply_markup = {"inline_keyboard": [[{"text": "❤️ ወደ ቤተሳይዳ መድረክ ግባ", "web_app": {"url": f"https://{request.host}/"}}]]}
+        send_message(chat_id, reminder_text, reply_markup)
+        
     return "OK", 200
 
-# 🎨 ሚኒ አፕ ኤፒአይ
 @app.route('/api/daily-blessing', methods=['GET'])
 def get_daily_blessing():
-    eth_month, eth_day, eth_month_name = get_exact_ethiopian_info()
+    eth_month, eth_day = get_ethiopian_date()
     calendar_data = load_calendar_data()
     key = f"{eth_month}-{eth_day}"
     
-    day_info = calendar_data.get(key)
-    if not day_info:
-        # ዳታው ከጠፋ ወደ 10-28 ይሄዳል፣ እሱም ከጠፋ ባዶ እንዳይሆን መሸፈኛ
-        day_info = calendar_data.get("10-28", {
-            "holiday": "የዕለቱ ቅዱስ በዓል",
-            "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
-            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።"
-        })
+    # ከ JSON መፈለግ፣ ከጠፋ ነባሪውን ሰኔ 21 መስጠት
+    day_info = calendar_data.get(key, calendar_data.get("10-21", {
+        "holiday": "የቅድስት ድንግል ማርያም ዓመታዊ መታሰቢያ",
+        "sinksar": "በዚህች ዕለት እመቤታችን ቅድስት ድንግል ማርያም ለዓለም ሁሉ መድኃኒት የሆነውን ጌታችንን የወለደችበት ታላቅ በዓል ነው።",
+        "gitsawe": "ዲያቆን፦ ገላ. 4:4 | ወንጌል፦ ሉቃስ 1:26"
+    }))
     
+    advice = random.choice(GENERAL_ADVICE)
     return jsonify({
-        "ethiopian_date": f"{eth_month_name} {eth_day} ቀን 2018 ዓ.ም",
-        "holiday_name": day_info.get("holiday", "የዕለቱ በዓል"),
+        "ethiopian_date": f"ሰኔ {eth_day} ቀን 2018 ዓ.ም",
+        "holiday_name": day_info["holiday"],
         "image_url": "mary.jpg",
-        "sinksar": day_info.get("sinksar", ""),
-        "gitsawe": day_info.get("gitsawe", ""),
-        "quote": "🔍 ዝርዝር ትምህርቱን፣ ሰፊ የወንጌል አንድምታውንና ጸሎቱን በቻናላችን ላይ በሰፊው ይማሩ!"
+        "sinksar": day_info["sinksar"],
+        "gitsawe": day_info["gitsawe"],
+        "quote": f"{advice['msg']} — {advice['author']}"
     })
 
-# 🔔 ክሮን ጆብ - በየተራ ሰፋፊ ይዘቶችን ወደ ቻናል የሚያስተላልፍ
 @app.route('/api/cron-reminder', methods=['GET'])
 def cron_reminder():
     if not CHAT_ID:
         return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
         
-    eth_month, eth_day, eth_month_name = get_exact_ethiopian_info()
-    calendar_data = load_calendar_data()
-    key = f"{eth_month}-{eth_day}"
-    
-    day_info = calendar_data.get(key)
-    
-    # 🚨 እዚህ ጋ ነው የተስተካከለው! 
-    # በ JSON ውስጥ ለዛሬ ቀን ዳታ ከጠፋ ብቻ ወደ 10-28 እንዲሄድ ተደርጓል
-    if not day_info:
-        day_info = calendar_data.get("10-28")
-        
-    # አሁንም ዳታ ፈጽሞ ካልተገኘ (JSON ከተበላሸ) ቦቱ Error ሰጥቶ እንዳይቆም ብቻ መጠባበቂያ
-    if not day_info:
-        day_info = {
-            "holiday": "የዕለቱ መንፈሳዊ በዓል",
-            "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ በጸሎትና በምስጋና እናስባቸዋለን።",
-            "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።",
-            "wongel_zirzir": "የወንጌልን ሰፊ ትምህርት በሕይወታችን እንተርጉመው።",
-            "abew_timhirt": "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም።” — ቅዱስ ዮሐንስ አፈወርቅ",
-            "tseolot": "አቤቱ አምላካችን ሆይ! በቸርነትህ ጠብቀን።"
-        }
-
-    # 🔄 በየሰዓቱ የተለያየ ይዘት እንዲወጣ በዘፈቀደ (Random) አንዱን ይመርጣል
-    content_type = random.choice(["sinksar", "wongel", "abew", "tseolot"])
-    
-    base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ {eth_month_name} {eth_day} ቀን 2018 ዓ.ም</b>\n\n"
-    
-    if content_type == "sinksar":
-        body = (
-            f"📖 <b>የዕለቱ በዓል፦</b> {day_info.get('holiday', 'የዕለቱ ቅዱስ በዓል')}\n\n"
-            f"📜 <b>የዕለቱ ስንክሳር መታሰቢያና ታሪክ፦</b>\n{day_info.get('sinksar', 'የለም')}\n\n"
-            f"☦️ <b>የዕለቱ ቅዱስ ግጻዌ፦</b>\n{day_info.get('gitsawe', 'የለም')}"
-        )
-    elif content_type == "wongel":
-        zirzir_text = day_info.get('wongel_zirzir', day_info.get('terguame', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።'))
-        body = (
-            f"📖 <b>የዕለቱ በዓል፦</b> {day_info.get('holiday', 'የዕለቱ ቅዱስ በዓል')}\n\n"
-            f"✨ <b>የወንጌል ሰፊ አንድምታ ትርጓሜና ትምህርት፦</b>\n{zirzir_text}"
-        )
-    elif content_type == "abew":
-        advice_text = day_info.get('abew_timhirt', random.choice(GENERAL_ADVICE))
-        body = (
-            f"💡 <b>የአበው ምክርና መንፈሳዊ ተግሣጽ፦</b>\n{advice_text}"
-        )
-    else: # tseolot
-        tseolot_text = day_info.get('tseolot', "አቤቱ አምላካችን ሆይ! በቸርነትህ ጠብቀን።")
-        body = (
-            f"🙏 <b>የዕለቱ የጸሎት ማዕድ፦</b>\n{tseolot_text}"
-        )
-        
-    formatted_msg = base_header + body + "\n\n🕊️ <i>በእንተ ስማ ለማርያም እያልን የተራቡትን የምንመግብበት የቤተሳይዳ በጎ አድራጎት አባል ይሁኑ።</i>"
+    selected_teaching = random.choice(SPIRITUAL_TEACHINGS)
+    formatted_msg = (
+        f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n\n"
+        f"{selected_teaching}\n\n"
+        f"🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
+    )
     
     reply_markup = {
         "inline_keyboard": [[{
-            "text": "💎 ማንም ሳይጸጸት በደስታ ይስጥ ➔ [ ወደ ቦቱ ግባ ] 💎",
-            "url": BOT_URL
+            "text": "❤️ ማንም ሳይጸጸት በደስታ ይስጥ (ወደ ቦቱ ግባ)",
+            "url": f"https://t.me/{BOT_USERNAME}?start=true"
         }]]
     }
     
+    # 🎵 መዝሙሩን (Audio) ከጽሑፉ ጋር አብሮ መላክ
+    # በ Vercel ላይ የተቀመጠውን mary.mp3 ሙሉ ሊንክ መጠቀም
     audio_url = f"https://{request.host}/mary.mp3"
     
     success = send_audio(CHAT_ID, audio_url, formatted_msg, reply_markup)
-    
     if success:
-        return jsonify({"status": "success", "message": f"{content_type} ይዘት ከነመዝሙሩ ተልኳል"}), 200
+        return jsonify({"status": "success", "message": "መዝሙርና ማነቂያ መልእክት ተልኳል"}), 200
     else:
-        fallback_success = send_message(CHAT_ID, formatted_msg, reply_markup)
-        if fallback_success:
-            return jsonify({"status": "fallback", "message": f"{content_type} ይዘት በጽሑፍ ብቻ ተልኳል"}), 200
-        else:
-            return jsonify({"status": "error", "message": "መላክ አልተቻለም"}), 500
+        # ኦዲዮው ካልሰራ በጽሑፍ ብቻ እንዲሞክር ማድረግ
+        send_message(CHAT_ID, formatted_msg, reply_markup)
+        return jsonify({"status": "fallback", "message": "በጽሑፍ ብቻ ተልኳል"}), 200
 
 def send_message(chat_id, text, reply_markup=None):
     url = f"{TELEGRAM_API}/sendMessage"
@@ -200,9 +131,15 @@ def send_message(chat_id, text, reply_markup=None):
     try: return requests.post(url, json=payload).status_code == 200
     except: return False
 
+# 🎤 አዲሱ ድምፅ/መዝሙር መላኪያ ፋንክሽን
 def send_audio(chat_id, audio_url, caption, reply_markup=None):
     url = f"{TELEGRAM_API}/sendAudio"
-    payload = {"chat_id": chat_id, "audio": audio_url, "caption": caption, "parse_mode": "HTML"}
+    payload = {
+        "chat_id": chat_id,
+        "audio": audio_url,
+        "caption": caption,
+        "parse_mode": "HTML"
+    }
     if reply_markup: payload["reply_markup"] = reply_markup
     try: return requests.post(url, json=payload).status_code == 200
     except: return False
