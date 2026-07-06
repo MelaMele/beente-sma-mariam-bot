@@ -77,7 +77,7 @@ def get_daily_blessing():
     key = f"{eth_month}-{eth_day}"
     
     # ከ JSON መፈለግ፣ ከጠፋ ነባሪውን ሰኔ 21 መስጠት
-    day_info = calendar_data.get(key, calendar_data.get("10-21", {
+    day_info = calendar_data.get(key, calendar_data.get("10_21", {
         "holiday": "የቅድስት ድንግል ማርያም ዓመታዊ መታሰቢያ",
         "sinksar": "በዚህች ዕለት እመቤታችን ቅድስት ድንግል ማርያም ለዓለም ሁሉ መድኃኒት የሆነውን ጌታችንን የወለደችበት ታላቅ በዓል ነው።",
         "gitsawe": "ዲያቆን፦ ገላ. 4:4 | ወንጌል፦ ሉቃስ 1:26"
