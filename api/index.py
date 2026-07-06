@@ -78,20 +78,21 @@ def get_daily_blessing():
     eth_month, eth_day = get_ethiopian_date()
     calendar_data = load_calendar_data()
     
-    # የ JSON ፋይልህ ቁልፍ አወቃቀር (10_28 ወይም 10_28) መሆኑን አረጋግጥ
+    # 🚨 አንተ በፈለግኸው መሠረት በታችኛው ሰረዝ (10_29) እንዲፈልግ ተደርጓል
     key = f"{eth_month}_{eth_day}" 
     
     eth_month_name = "ሰኔ" if eth_month == 10 else "ሐምሌ" if eth_month == 11 else "ግንቦት"
     
+    # ዳታውን ከ JSON ፋይሉ ላይ መሳብ
     day_data = calendar_data.get(key)
     if not day_data:
-        # ዳታው በቁልፉ ከጠፋ ወደ ነባሪ መከላከያ ይሄዳል
-        day_data = calendar_data.get("10_28", calendar_data.get("10_28", {
+        # ዳታው በቁልፉ ከጠፋ ወደ ነባሪ መከላከያ (Fallback) ይሄዳል
+        day_data = calendar_data.get("10_28", {
             "holiday": "የዕለቱ ቅዱስ በዓል",
             "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ እናስባለን።",
             "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን ይከታተሉ።",
             "wongel": "የወንጌልን ሰፊ ትምህርት በሕይወታችን እንተርጉመው።"
-        }))
+        })
     
     return jsonify({
         "ethiopian_date": f"{eth_month_name} {eth_day} ቀን 2018 ዓ.ም",
@@ -114,9 +115,10 @@ def cron_reminder():
     
     eth_month_name = "ሰኔ" if eth_month == 10 else "ሐምሌ" if eth_month == 11 else "ግንቦት"
     
+    # ዳታውን ከ JSON ፋይሉ ላይ መሳብ
     day_data = calendar_data.get(key)
     if not day_data:
-        day_data = calendar_data.get("10_28", calendar_data.get("10_28", {
+        day_data = calendar_data.get("10_28", {
             "holiday": "የዕለቱ መንፈሳዊ በዓል",
             "sinksar": "የዕለቱን ስንክሳር በጸሎት እናስባለን።",
             "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።",
@@ -124,7 +126,7 @@ def cron_reminder():
             "terguame": "ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።",
             "mazmur": "ያማሩ መንፈሳዊ መዝሙራት።",
             "abew": GENERAL_ADVICE
-        }))
+        })
         
     content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ {eth_month_name} {eth_day} ቀን</b>\n\n"
