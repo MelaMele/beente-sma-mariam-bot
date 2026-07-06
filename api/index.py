@@ -76,7 +76,7 @@ def webhook():
 def get_daily_blessing():
     eth_month, eth_day = get_ethiopian_date()
     calendar_data = load_calendar_data()
-    key = f"{eth_month}-{eth_day}"
+    key = f"{eth_month}_{eth_day}"
     
     # የዕለቱን ዳታ ከ JSON መፈለግ
     day_data = calendar_data.get(key, {
