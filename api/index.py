@@ -30,11 +30,9 @@ def get_ethiopian_date():
         eth_day = utc_now.day
     return eth_month, eth_day
 
-# 📁 calendar_data.json በ api ፎልደር ውስጥ ሲሆን ፋይሉን በቀጥታ የሚያነብ
+# 📁 በ api ፎልደር ውስጥ ያለውን calendar_data.json ፋይል በቀጥታ የሚያነብ ፋንክሽን
 def load_calendar_data():
-    # ኮዱ ካለበት (api ፎልደር) ውስጥ calendar_data.json ን በቀጥታ ይፈልጋል
     path = os.path.join(os.path.dirname(__file__), 'calendar_data.json')
-    
     if os.path.exists(path):
         try:
             with open(path, 'r', encoding='utf-8') as f:
@@ -44,7 +42,7 @@ def load_calendar_data():
             return {}
     return {}
 
-# 💡 የአበው ምክሮች ስብስብ (ከ JSON ፋይሉ ዳታ ከጠፋ እንደ መከላከያ የሚሆን)
+# 💡 የአበው ምክሮች ስብስብ
 GENERAL_ADVICE = [
     "“ምጽዋት ሰጪውን እንጂ ተቀባዩን ብቻ አይጠቅምም። ለሰጪው የጽድቅም መክፈቻ ናት።” — ቅዱስ ዮሐንስ አፈወርቅ",
     "“የተራበውን ሰው ስታይ ሰብአዊነትህ ይንቀሳቀስ፤ መለገስ የሃይማኖት ልዩነት አይጠይቅ።” — የአበው ምክር",
@@ -82,12 +80,13 @@ def get_daily_blessing():
     
     day_data = calendar_data.get(key)
     if not day_data:
-        day_data = calendar_data.get("10_29", {
+        # ለደኅንነት ያህል ዛሬን 10_29 ወይም 10_30 አድርጎ መፈለግ
+        day_data = calendar_data.get("10_29", calendar_data.get("10_30", {
             "holiday": "የዕለቱ ቅዱስ በዓል",
             "sinksar": "በዚህች ዕለት የሚታሰቡ ቅዱሳንን ታሪክ እናስባለን።",
             "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን ይከታተሉ።",
             "wongel_zirzir": "የወንጌልን ሰፊ ትምህርት በሕይወታችን እንተርጉመው።"
-        })
+        }))
     
     return jsonify({
         "ethiopian_date": f"{eth_month_name} {eth_day} ቀን 2018 ዓ.ም",
@@ -95,7 +94,7 @@ def get_daily_blessing():
         "image_url": "mary.jpg",
         "sinksar": day_data.get("sinksar", ""),
         "gitsawe": day_data.get("gitsawe", ""),
-        "quote": day_data.get("wongel_zirzir", "")  # ✅ ከ JSON ፋይልህ wongel_zirzir ን እንዲያነብ ተስተካክሏል
+        "quote": day_data.get("wongel_zirzir", "")
     })
 
 # 2️⃣ በየ 30 ደቂቃው ወደ ቻናል መልእክት መላኪያ ክሮን ጆብ (Cron Job Route)
@@ -112,14 +111,14 @@ def cron_reminder():
     
     day_data = calendar_data.get(key)
     if not day_data:
-        day_data = calendar_data.get("10_29", {
+        day_data = calendar_data.get("10_29", calendar_data.get("10_30", {
             "holiday": "የዕለቱ መንፈሳዊ በዓል",
             "sinksar": "የዕለቱን ስንክሳር በጸሎት እናስባለን።",
             "gitsawe": "የዕለቱን ግጻዌ በቤተክርስቲያን በመገኘት ይከታተሉ።",
             "wongel_zirzir": "የወንጌል ሰፊ አንድምታ።",
             "abew_timhirt": "ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።",
             "mazmur": "ያማሩ መንፈሳዊ መዝሙራት።"
-        })
+        }))
         
     content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ {eth_month_name} {eth_day} ቀን</b>\n\n"
@@ -130,12 +129,13 @@ def cron_reminder():
             f"☦️ <b>የዕለቱ ግጻዌ፦</b>\n{day_data.get('gitsawe', 'የለም')}"
         )
     elif content_type == "wongel_terguame":
+        # 🚨 በ 10_30 ላይ 'tseolot' ተብሎ የተጻፈውን ስህተት ጭምር ፈልጎ እንዲያገኝ ተደርጓል
+        prayer_text = day_data.get('tseolot', day_data.get('tseolot', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።'))
         body = (
-            f"📖 <b>የዕለቱ ወንጌል፦</b>\n{day_data.get('wongel_zirzir', 'የለም')}\n\n"  # ✅ ወደ wongel_zirzir ተቀይሯል
-            f"✨ <b>የጸሎት ማዕድ፦</b>\n{day_data.get('tseolot', 'ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓት እናቅና።')}"
+            f"📖 <b>የዕለቱ ወንጌል፦</b>\n{day_data.get('wongel_zirzir', 'የለም')}\n\n"
+            f"✨ <b>የጸሎት ማዕድ፦</b>\n{prayer_text}"
         )
     else:
-        # ✅ ከ JSON ፋይልህ abew_timhirt ን ፈልጎ እንዲያነብ ተስተካክሏል
         abew_text = day_data.get('abew_timhirt', GENERAL_ADVICE)
         if isinstance(abew_text, list): 
             abew_text = random.choice(abew_text)
