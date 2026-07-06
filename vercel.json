@@ -10,15 +10,9 @@
     { "src": "calendar_data.json", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/api", "dest": "api/index.py" },
     { "src": "/api/daily-blessing", "dest": "api/index.py" },
     { "src": "/api/cron-reminder", "dest": "api/index.py" },
-    { "src": "/api", "dest": "api/index.py" },
     { "src": "/(.*)", "dest": "/$1" }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron-reminder",
-      "schedule": "0 4,6,9,12,14,16 * * *"
-    }
   ]
 }
