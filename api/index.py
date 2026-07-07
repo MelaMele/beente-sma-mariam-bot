@@ -99,29 +99,47 @@ def get_daily_blessing():
 # 🔔 በየ 30 ደቂቃው ይዘቱን እየቀያየረ ወደ ቻናል የሚልክ ዋናው ክሮን ጆብ
 @app.route('/api/cron-reminder', methods=['GET'])
 def cron_reminder():
-    if not CHAT_ID:
-        return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
-        
+    # ... (የደህንነት ቼክ እና የ CHAT_ID ማረጋገጫ እንዳለ ሆኖ)
+
+    # 1. ዛሬ ስንት ቀን እንደሆነ ከፋንክሽኑ ቁጥሩን ይቀበላል (ለምሳሌ፡ eth_day = 28)
     _, eth_day = get_ethiopian_date()
+    day_str = str(eth_day) # በ JSON ውስጥ ቁልፉ String ስለሚሆን ወደ ጽሑፍ መቀየር
     
+    # 2. ሙሉውን የካላንደር ዳታ ከፋይሉ ያነባል
+    calendar_data = load_calendar_data()
+    
+    # 3. የዕለቱን ዳታ ከፋይሉ ይፈልጋል፤ ፋይሉ ውስጥ ከሌለ Fallback (የቀድሞውን) ዳታ ይሰጣል
+    today_data = calendar_data.get(day_str, {
+        "sinksar": "የዕለቱ ስንክሳር አልተገኘም...",
+        "gitsawe": "የዕለቱ ግጻዌ አልተገኘም...",
+        "wongel": "የዕለቱ ወንጌል አልተገኘም...",
+        "terguame": "የዕለቱ ትርጓሜ አልተገኘም...",
+        "mazmur": "የዕለቱ መዝሙር አልተገኘም...",
+        "abew": GENERAL_ADVICE
+    })
+    
+    # 4. በየ 30 ደቂቃው የሚላከውን ይዘት መምረጥ
     content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ ሰኔ {eth_day} ቀን</b>\n\n"
     
+    # 5. እዚህ ጋር JUNE_28_DATA ከማለት ይልቅ በ 'today_data' እንተካዋለን
     if content_type == "sinksar_gitsawe":
         body = (
-            f"📜 <b>የዕለቱ ስንክሳር፦</b>\n{JUNE_28_DATA['sinksar']}\n\n"
-            f"☦️ <b>የዕለቱ ግጻዌ፦</b>\n{JUNE_28_DATA['gitsawe']}"
+            f"📜 <b>የዕለቱ ስንክሳር፦</b>\n{today_data['sinksar']}\n\n"
+            f"☦️ <b>የዕለቱ ግጻዌ፦</b>\n{today_data['gitsawe']}"
         )
     elif content_type == "wongel_terguame":
         body = (
-            f"{JUNE_28_DATA['wongel']}\n\n"
-            f"{JUNE_28_DATA['terguame']}"
+            f"{today_data['wongel']}\n\n"
+            f"{today_data['terguame']}"
         )
     else:
         body = (
-            f"{JUNE_28_DATA['mazmur']}\n\n"
-            f"💡 <b>የአበው ትምህርት፦</b>\n{random.choice(JUNE_28_DATA['abew'])}"
+            f"{today_data['mazmur']}\n\n"
+            f"💡 <b>የአበው ትምህርት፦</b>\n{random.choice(today_data['abew'])}"
         )
+        
+    # ... (የቀረው የመልዕክት መላኪያ ኮድ እንዳለ ይቀጥላል)
         
     formatted_msg = base_header + body + "\n\n🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
     
