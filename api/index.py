@@ -112,7 +112,7 @@ def cron_reminder():
     today_data = get_today_calendar_data(str(eth_day)) # 🔄 ዳይናሚክ የዕለቱ ዳታ
     
     content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
-    base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ ሰኔ {eth_day} ቀን</b>\n\n"
+    base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቃቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ ሰኔ {eth_day} ቀን</b>\n\n"
     
     if content_type == "sinksar_gitsawe":
         body = (
