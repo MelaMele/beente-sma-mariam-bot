@@ -156,7 +156,7 @@ def cron_reminder():
             f"🙏 <b>የጸሎት ማዕድ፦</b>\n{today_data.get('tseolot', '')}"
         )
         
-    formatted_msg = base_header + body + "\n\n🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
+    formatted_msg = base_header + body + "\n\n🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና። በእንተ ስማ ለማርያም ወገኖቻችንን እንርዳ!👩‍👩‍👦👇</i>"
     
     reply_markup = {
         "inline_keyboard": [[{
