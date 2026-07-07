@@ -52,17 +52,21 @@ def load_calendar_data():
                 continue
     return {}
 
-# 🛠️ ከ JSON ፋይሉ ላይ የዕለቱን ዳታ መጫን (ካልተገኘ Fallback mock ዳታ ይሰጣል)
-calendar_data = load_calendar_data()
-# ለሙከራ ያህል የሰኔ 28 ዳታ ከፋይሉ ካልተገኘ ይሄን ይጠቀማል
-JUNE_28_DATA = calendar_data.get("28", {
-    "sinksar": "የቅዱሳን ታሪክ እና ስንክሳር እዚህ ይገባል...",
-    "gitsawe": "የዕለቱ መልዕክት/ምንባብ...",
-    "wongel": "ማቴዎስ ወንጌል...",
-    "terguame": "የወንጌል ትርጓሜ...",
-    "mazmur": "የዕለቱ መዝሙር ግጥም...",
-    "abew": GENERAL_ADVICE
-})
+# 🛠️ ማዕከላዊ የዕለቱን ዳታ ማግኛ ፋንክሽን (Fallback መረጃን ጨምሮ)
+def get_today_calendar_data(day_str):
+    calendar_data = load_calendar_data()
+    return calendar_data.get(day_str, {
+        "holiday": "የዕለቱ በዓል",
+        "sinksar": "የቅዱሳን ታሪክ እና ስንክሳር እዚህ ይገባል...",
+        "gitsawe": "የዕለቱ መልዕክት/ምንባብ...",
+        "wongel": "ማቴዎስ ወንጌል...",
+        "terguame": "የወንጌል ትርጓሜ...",
+        "mazmur": "የዕለቱ መዝሙር ግጥም...",
+        "abew": GENERAL_ADVICE,
+        "wongel_zirzir": "ዝርዝር የወንጌል ትምህርት...",
+        "abew_timhirt": "የአበው ምክር...",
+        "tseolot": "የዕለቱ ጸሎት..."
+    })
 
 @app.route('/api', methods=['POST'])
 def webhook():
@@ -87,42 +91,29 @@ def webhook():
 @app.route('/api/daily-blessing', methods=['GET'])
 def get_daily_blessing():
     _, eth_day = get_ethiopian_date()
+    today_data = get_today_calendar_data(str(eth_day)) # 🔄 አሁን ዳይናሚክ ሆኗል!
+    
     return jsonify({
         "ethiopian_date": f"ሰኔ {eth_day} ቀን 2018 ዓ.ም",
-        "holiday_name": "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል",
+        "holiday_name": today_data.get("holiday", "የአማኑኤል እና የቅዱስ ቴዎድሮስ በዓል"),
         "image_url": "mary.jpg",
-        "sinksar": JUNE_28_DATA["sinksar"],
-        "gitsawe": JUNE_28_DATA["gitsawe"],
-        "quote": JUNE_28_DATA["wongel"]
+        "sinksar": today_data["sinksar"],
+        "gitsawe": today_data["gitsawe"],
+        "quote": today_data["wongel"]
     })
 
 # 🔔 በየ 30 ደቂቃው ይዘቱን እየቀያየረ ወደ ቻናል የሚልክ ዋናው ክሮን ጆብ
 @app.route('/api/cron-reminder', methods=['GET'])
 def cron_reminder():
-    # ... (የደህንነት ቼክ እና የ CHAT_ID ማረጋገጫ እንዳለ ሆኖ)
-
-    # 1. ዛሬ ስንት ቀን እንደሆነ ከፋንክሽኑ ቁጥሩን ይቀበላል (ለምሳሌ፡ eth_day = 28)
+    if not CHAT_ID:
+        return jsonify({"status": "error", "message": "NOTIFICATION_CHAT_ID አልተገኘም"}), 400
+        
     _, eth_day = get_ethiopian_date()
-    day_str = str(eth_day) # በ JSON ውስጥ ቁልፉ String ስለሚሆን ወደ ጽሑፍ መቀየር
+    today_data = get_today_calendar_data(str(eth_day)) # 🔄 ዳይናሚክ የዕለቱ ዳታ
     
-    # 2. ሙሉውን የካላንደር ዳታ ከፋይሉ ያነባል
-    calendar_data = load_calendar_data()
-    
-    # 3. የዕለቱን ዳታ ከፋይሉ ይፈልጋል፤ ፋይሉ ውስጥ ከሌለ Fallback (የቀድሞውን) ዳታ ይሰጣል
-    today_data = calendar_data.get(day_str, {
-        "sinksar": "የዕለቱ ስንክሳር አልተገኘም...",
-        "gitsawe": "የዕለቱ ግጻዌ አልተገኘም...",
-        "wongel": "የዕለቱ ወንጌል አልተገኘም...",
-        "terguame": "የዕለቱ ትርጓሜ አልተገኘም...",
-        "mazmur": "የዕለቱ መዝሙር አልተገኘም...",
-        "abew": GENERAL_ADVICE
-    })
-    
-    # 4. በየ 30 ደቂቃው የሚላከውን ይዘት መምረጥ
     content_type = random.choice(["sinksar_gitsawe", "wongel_terguame", "mazmur_abew"])
     base_header = f"✨ <b>የዕለቱ መንፈሳዊ ማነቂያ (ቤተሳይዳ)</b> ✨\n📅 <b>ዕለት፦ ሰኔ {eth_day} ቀን</b>\n\n"
     
-    # 5. እዚህ ጋር JUNE_28_DATA ከማለት ይልቅ በ 'today_data' እንተካዋለን
     if content_type == "sinksar_gitsawe":
         body = (
             f"📜 <b>የዕለቱ ስንክሳር፦</b>\n{today_data['sinksar']}\n\n"
@@ -138,8 +129,6 @@ def cron_reminder():
             f"{today_data['mazmur']}\n\n"
             f"💡 <b>የአበው ትምህርት፦</b>\n{random.choice(today_data['abew'])}"
         )
-        
-    # ... (የቀረው የመልዕክት መላኪያ ኮድ እንዳለ ይቀጥላል)
         
     formatted_msg = base_header + body + "\n\n🕊️ <i>ሕይወታችንን በኦርቶዶክሳዊት ተዋሕዶ ሥርዓትና በትምህርተ አበው እናቅና።</i>"
     
@@ -163,7 +152,7 @@ def format_daily_message(day_data):
     message = (
         f"📅 **ዕለታዊ የቤተክርስቲያን ዓውደ አዋጅ**\n"
         f"━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"🌟 **የዕለቱ በዓል፦** {day_data['holiday']}\n\n"
+        f"🌟 **የዕለቱ በዓል፦** {day_data.get('holiday', 'ያልተገለጸ')}\n\n"
         f"📜 **ስንክሳር (የቅዱሳን ታሪክ)፦**\n{day_data['sinksar']}\n\n"
         f"{day_data['gitsawe']}\n\n"
         f"📖 **የዕለቱ ሰፊ ትምህርት፦**\n{day_data['wongel_zirzir']}\n\n"
